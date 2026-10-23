@@ -53,7 +53,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="glass-strong border border-slate-200/90 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative"
+            className="glass-strong border border-slate-200/90 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative max-h-[92dvh] overflow-y-auto"
           >
             <button
               onClick={onClose}

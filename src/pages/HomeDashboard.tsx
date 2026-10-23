@@ -136,17 +136,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 self-start sm:self-center">
+          <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-center w-full sm:w-auto">
             <button
               onClick={() => onNavigate('quiz', { mode: 'mock' })}
-              className="bg-white/90 hover:bg-white text-slate-700 border border-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
+              className="flex-1 sm:flex-initial justify-center bg-white/90 hover:bg-white text-slate-700 border border-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-xl shadow-sm transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
             >
               <Trophy className="w-3.5 h-3.5 text-amber-500" />
               <span>Full Mock (40Q)</span>
             </button>
             <button
               onClick={() => onNavigate('quiz', { mode: 'domain' })}
-              className="btn-shimmer bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
+              className="btn-shimmer flex-1 sm:flex-initial justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
             >
               <Zap className="w-3.5 h-3.5 relative z-10" />
               <span className="relative z-10">Start Quiz</span>
@@ -267,8 +267,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             </div>
           </div>
 
-          {/* Quick Metrics Bar: Streaks, Due Cards, Plan Status */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Quick Metrics Bar: Streaks, Due Cards, Plan Status, Notes */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
             <div
               onClick={() => onNavigate('flashcards')}
               className="glass hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm active:scale-[0.97] hover:-translate-y-px"

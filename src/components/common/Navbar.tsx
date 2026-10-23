@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 glass-nav py-1.5 px-3">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 glass-nav pt-1.5 pb-safe px-2 sm:px-3">
       <div className="max-w-md mx-auto flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               key={item.id}
               onClick={() => onNavigate(item.id)}
               whileTap={{ scale: 0.94 }}
-              className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-colors relative ${
+              className={`flex flex-col items-center justify-center py-1 px-2 xs:px-3 rounded-xl transition-colors relative flex-1 max-w-[76px] ${
                 isActive
                   ? 'text-blue-700 dark:text-blue-400 font-bold'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'

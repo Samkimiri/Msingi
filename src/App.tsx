@@ -128,7 +128,7 @@ export const App: React.FC = () => {
         />
 
         {/* Main Content Area with 300ms Page Transitions */}
-        <main className="flex-1 max-w-4xl w-full mx-auto px-4 pt-4 pb-20">
+        <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-24 sm:pb-28">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}

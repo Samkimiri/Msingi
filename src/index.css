@@ -20,6 +20,11 @@
     --glass-blur-card: 12px;
     --glass-blur-nav: 16px;
     --glass-blur-modal: 20px;
+    /* Safe Area Insets for Mobile Applications & WebViews */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 
   .dark {
@@ -32,6 +37,12 @@
     --glass-border-focus: rgba(56, 189, 248, 0.45);
     --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.50), 0 2px 6px -1px rgba(0, 0, 0, 0.35);
+
+    /* Safe Area Insets */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 
   @media (max-width: 768px) {
@@ -42,18 +53,47 @@
     }
   }
 
+  html {
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     background-color: var(--color-bg);
     color: #1e293b;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .dark body,
   .dark {
     color: #f1f5f9;
   }
+}
+
+/* Safe area padding utilities for mobile headers and bottom navbars */
+.pt-safe {
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0.75rem));
+}
+
+.pb-safe {
+  padding-bottom: max(0.6rem, env(safe-area-inset-bottom, 0.6rem));
 }
 
 /* Glassmorphism Utility Classes */

@@ -245,21 +245,21 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] max-w-3xl mx-auto space-y-4">
+    <div className="flex flex-col h-[calc(100dvh-130px)] sm:h-[calc(100vh-140px)] max-w-3xl mx-auto space-y-3 sm:space-y-4">
       {/* Top Banner: Language Selector & Controls */}
-      <div className="glass border border-slate-200/90 dark:border-slate-800 rounded-3xl p-3.5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+      <div className="glass border border-slate-200/90 dark:border-slate-800 rounded-3xl p-3 sm:p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+        <div className="flex items-center space-x-2 sm:space-x-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 flex-shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
               <h2 className="text-sm font-bold text-slate-900 dark:text-white">Rafiki AI Study Buddy</h2>
               <span className="text-[10px] font-bold bg-blue-50 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-1.5 py-0.2 rounded border border-blue-200 dark:border-blue-800">
-                AZ-900 Aligned
+                AZ-900
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400">Contextual Azure tutor with African analogies</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block">Contextual Azure tutor with African analogies</p>
           </div>
         </div>
 
@@ -393,7 +393,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
       </div>
 
       {/* Preset Prompt Chips */}
-      <div className="flex items-center space-x-2 overflow-x-auto py-1 scrollbar-none text-xs">
+      <div className="flex items-center space-x-2 overflow-x-auto py-1 scrollbar-none text-xs -mx-1 px-1 touch-pan-x overscroll-contain">
         {PRESET_CHIPS.map((chip, idx) => (
           <button
             key={idx}

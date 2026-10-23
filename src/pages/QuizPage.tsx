@@ -430,7 +430,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       {isQuizActive && !isMockCompleted && currentQuestion && (
         <div className="space-y-5">
           {/* Top Progress & Timer Bar */}
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/80">
             <div className="flex items-center space-x-2">
               <span className="text-xs font-bold text-slate-800">
                 Question {currentIndex + 1} of {questions.length}
