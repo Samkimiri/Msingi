@@ -39,31 +39,31 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-surface border border-surface-border w-full max-w-sm rounded-2xl p-5 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 rounded-lg"
         >
           <X className="w-5 h-5" />
         </button>
 
         {submitted ? (
           <div className="py-6 text-center space-y-2">
-            <div className="w-12 h-12 bg-savannah-500/20 text-savannah-400 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
               <Check className="w-6 h-6" />
             </div>
-            <h4 className="font-bold text-white text-base">Asante! Report Received</h4>
-            <p className="text-xs text-slate-400">Our content auditor will inspect this against Microsoft Learn.</p>
+            <h4 className="font-bold text-slate-900 text-base">Asante! Report Received</h4>
+            <p className="text-xs text-slate-600">Our content auditor will inspect this against Microsoft Learn.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex items-center space-x-2 text-sunset-400">
-              <AlertCircle className="w-5 h-5" />
-              <h3 className="font-bold text-sm text-white">Report Content Issue</h3>
+            <div className="flex items-center space-x-2 text-blue-700">
+              <AlertCircle className="w-5 h-5 text-blue-600" />
+              <h3 className="font-bold text-sm text-slate-900">Report Content Issue</h3>
             </div>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Found a typo, outdated terminology, or ambiguous explanation in this {contentType}? Help us keep Msingi 100% accurate.
             </p>
 
@@ -72,7 +72,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
               onChange={(e) => setIssueText(e.target.value)}
               placeholder="Describe the discrepancy or what to verify on Microsoft Learn..."
               rows={3}
-              className="w-full bg-surface-light border border-surface-border rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sunset-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white"
               required
             />
 
@@ -80,13 +80,13 @@ export const ReportModal: React.FC<ReportModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:bg-surface-light"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-sunset-500 hover:bg-sunset-600 text-white shadow-glow-orange transition-all"
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all"
               >
                 Submit Report
               </button>
@@ -97,4 +97,3 @@ export const ReportModal: React.FC<ReportModalProps> = ({
     </div>
   );
 };
-

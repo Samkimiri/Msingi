@@ -148,7 +148,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
     return `${greeting}That's a great question on Microsoft Azure Fundamentals!\n\nIn AZ-900, remember the 3 core pillars:\n1. **Cloud Concepts (25-30%)**: Benefits (scalability, elasticity, agility, HA, disaster recovery), CapEx vs OpEx, and cloud service types (IaaS, PaaS, SaaS).\n2. **Architecture & Services (35-40%)**: Regions, Availability Zones, Subscriptions, Resource Groups, Compute (VMs, Containers, Functions), Storage (Blob, Disk, Files), and Networking (VNet, VPN, ExpressRoute).\n3. **Management & Governance (30-35%)**: Azure Policy, RBAC, Locks, Cost Management, Microsoft Defender for Cloud, and Azure Monitor.\n\nAsk me about any specific Azure service or scenario!`;
   };
 
-  const handleSendMessage = (contentToSend?: string) => {
+  const handleSendMessage = async (contentToSend?: string) => {
     const text = (contentToSend || input).trim();
     if (!text) return;
 
@@ -165,7 +165,49 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
     if (!contentToSend) setInput('');
     setIsTyping(true);
 
-    // Realistic typing delay for natural interaction
+    try {
+      // Attempt backend Vercel serverless AI call
+      const res = await fetch('/api/rafiki', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          language,
+          history: newMessages.slice(-6),
+          questionContext: initialQuestion
+            ? {
+                stem: initialQuestion.stem,
+                options: initialQuestion.options,
+                correct: initialQuestion.correct,
+                explanation: initialQuestion.explanation,
+                outline_skill: initialQuestion.outline_skill,
+              }
+            : undefined,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) {
+          const rafikiMsg: ChatMessage = {
+            id: `rafiki-${Date.now()}`,
+            sender: 'rafiki',
+            content: data.reply,
+            timestamp: new Date().toISOString(),
+          };
+
+          const finalMessages = [...newMessages, rafikiMsg];
+          setMessages(finalMessages);
+          StorageService.saveChatMessages(finalMessages);
+          setIsTyping(false);
+          return;
+        }
+      }
+    } catch {
+      // Network unreachable or offline - fall through to offline grounded engine
+    }
+
+    // Offline grounded engine fallback
     setTimeout(() => {
       const responseText = generateRafikiResponse(text, language);
       const rafikiMsg: ChatMessage = {
@@ -179,7 +221,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
       setMessages(finalMessages);
       StorageService.saveChatMessages(finalMessages);
       setIsTyping(false);
-    }, 700);
+    }, 450);
   };
 
   // Web Speech API text-to-speech for accessibility
@@ -219,41 +261,41 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] max-w-3xl mx-auto space-y-4">
       {/* Top Banner: Language Selector & Controls */}
-      <div className="bg-surface border border-surface-border rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-3xl p-3.5 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sunset-500 to-amber-500 flex items-center justify-center text-white shadow-glow-orange">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <h2 className="text-sm font-bold text-white">Rafiki AI Study Buddy</h2>
-              <span className="text-[10px] font-semibold bg-sunset-500/20 text-sunset-400 px-1.5 py-0.2 rounded border border-sunset-500/30">
+              <h2 className="text-sm font-bold text-slate-900">Rafiki AI Study Buddy</h2>
+              <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.2 rounded border border-blue-200">
                 Grounded
               </span>
             </div>
-            <p className="text-[10px] text-slate-400">Contextual AZ-900 tutor with African analogies</p>
+            <p className="text-[10px] text-slate-500">Contextual AZ-900 tutor with African analogies</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
           {/* Language selector */}
-          <div className="flex items-center space-x-1 bg-surface-light border border-surface-border px-2 py-1 rounded-xl text-xs">
-            <Languages className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center space-x-1 bg-slate-50 border border-slate-200 px-2 py-1 rounded-xl text-xs">
+            <Languages className="w-3.5 h-3.5 text-slate-500" />
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}
-              className="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-slate-800 text-xs font-semibold focus:outline-none cursor-pointer"
             >
-              <option value="English" className="bg-surface text-slate-200">English</option>
-              <option value="Kiswahili" className="bg-surface text-slate-200">Kiswahili</option>
-              <option value="Sheng" className="bg-surface text-slate-200">Sheng</option>
-              <option value="Nigerian Pidgin" className="bg-surface text-slate-200">Nigerian Pidgin</option>
+              <option value="English" className="bg-white text-slate-800">English</option>
+              <option value="Kiswahili" className="bg-white text-slate-800">Kiswahili</option>
+              <option value="Sheng" className="bg-white text-slate-800">Sheng</option>
+              <option value="Nigerian Pidgin" className="bg-white text-slate-800">Nigerian Pidgin</option>
             </select>
           </div>
 
           <button
             onClick={handleClearChat}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-light"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
             title="Clear chat history"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -275,8 +317,8 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
               <div
                 className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                   isUser
-                    ? 'bg-slate-700 text-slate-300'
-                    : 'bg-gradient-to-br from-sunset-500 to-amber-600 text-white shadow-sm'
+                    ? 'bg-slate-200 text-slate-700 border border-slate-300'
+                    : 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm'
                 }`}
               >
                 {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
@@ -286,8 +328,8 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
               <div
                 className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 text-xs leading-relaxed ${
                   isUser
-                    ? 'bg-sunset-600 text-white rounded-tr-none shadow-sm'
-                    : 'bg-surface border border-surface-border text-slate-200 rounded-tl-none shadow-sm space-y-2'
+                    ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-500/10'
+                    : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm space-y-2'
                 }`}
               >
                 <div className="whitespace-pre-line font-normal">
@@ -295,18 +337,18 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
                 </div>
 
                 {!isUser && (
-                  <div className="flex items-center justify-between pt-2 border-t border-surface-border/60 text-[10px] text-slate-400">
-                    <span className="text-[10px] text-slate-500">
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-400">
                       AZ-900 Grounded Tutor
                     </span>
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleSpeak(msg.content)}
-                        className="hover:text-sunset-400 transition-colors flex items-center space-x-1"
+                        className="hover:text-blue-700 text-slate-500 transition-colors flex items-center space-x-1"
                         title="Read aloud"
                       >
                         {isSpeaking ? (
-                          <VolumeX className="w-3 h-3 text-sunset-400" />
+                          <VolumeX className="w-3 h-3 text-blue-600" />
                         ) : (
                           <Volume2 className="w-3 h-3" />
                         )}
@@ -314,7 +356,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
                       </button>
                       <button
                         onClick={() => setReportMsgId(msg.id)}
-                        className="hover:text-amber-400 transition-colors p-0.5"
+                        className="hover:text-amber-600 text-slate-400 transition-colors p-0.5"
                         title="Report issue with answer"
                       >
                         <AlertCircle className="w-3 h-3" />
@@ -329,13 +371,13 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
 
         {isTyping && (
           <div className="flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-sunset-500 to-amber-600 text-white flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center flex-shrink-0">
               <Bot className="w-3.5 h-3.5" />
             </div>
-            <div className="bg-surface border border-surface-border rounded-2xl rounded-tl-none p-3.5 flex items-center space-x-1.5 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-sunset-400 animate-bounce" />
-              <span className="w-2 h-2 rounded-full bg-sunset-400 animate-bounce [animation-delay:0.2s]" />
-              <span className="w-2 h-2 rounded-full bg-sunset-400 animate-bounce [animation-delay:0.4s]" />
+            <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 flex items-center space-x-1.5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.2s]" />
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.4s]" />
             </div>
           </div>
         )}
@@ -348,9 +390,9 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
           <button
             key={idx}
             onClick={() => handleSendMessage(chip)}
-            className="px-3 py-1.5 rounded-full bg-surface border border-surface-border hover:border-sunset-500/50 hover:bg-surface-light text-slate-300 hover:text-white text-[11px] whitespace-nowrap transition-all flex items-center space-x-1 flex-shrink-0 shadow-sm"
+            className="px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 text-[11px] whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 shadow-sm"
           >
-            <Sparkles className="w-3 h-3 text-sunset-400" />
+            <Sparkles className="w-3 h-3 text-blue-600" />
             <span>{chip}</span>
           </button>
         ))}
@@ -369,12 +411,12 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={`Ask Rafiki in ${language}... (e.g. "What is an Azure region?")`}
-          className="w-full bg-surface border border-surface-border focus:border-sunset-500 rounded-2xl px-4 py-3 pr-12 text-xs text-white placeholder-slate-500 focus:outline-none shadow-lg transition-colors"
+          className="w-full bg-white border border-slate-200 focus:border-blue-600 rounded-2xl px-4 py-3 pr-12 text-xs text-slate-800 placeholder-slate-400 focus:outline-none shadow-sm transition-colors"
         />
         <button
           type="submit"
           disabled={!input.trim()}
-          className="absolute right-2 p-2 rounded-xl bg-sunset-600 hover:bg-sunset-500 disabled:opacity-40 text-white transition-all shadow-glow-orange disabled:shadow-none"
+          className="absolute right-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white transition-all shadow-md shadow-blue-500/20 disabled:shadow-none"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

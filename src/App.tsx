@@ -75,7 +75,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 flex flex-col font-sans selection:bg-sunset-500/30 selection:text-sunset-300">
+    <div className="min-h-screen bg-background text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-700">
       {/* Top Header */}
       <Header
         profile={profile}

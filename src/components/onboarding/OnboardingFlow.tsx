@@ -92,19 +92,19 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-surface border border-surface-border rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-xl relative overflow-hidden">
         {/* Subtle decorative background glow */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-sunset-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-savannah-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Step indicator */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-surface-border">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
           <div className="flex items-center space-x-2">
-            <span className="w-7 h-7 rounded-lg bg-sunset-500/20 text-sunset-400 font-bold text-xs flex items-center justify-center border border-sunset-500/30">
+            <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200">
               {step}/3
             </span>
-            <span className="text-xs font-semibold text-slate-300">
+            <span className="text-xs font-semibold text-slate-700">
               {step === 1 && 'Exam Target Date'}
               {step === 2 && 'Weekly Hours & Language'}
               {step === 3 && 'Baseline Diagnostic (10 Qs)'}
@@ -113,7 +113,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
           <button
             onClick={handleFinishOnboarding}
-            className="text-[11px] font-medium text-slate-400 hover:text-white"
+            className="text-[11px] font-medium text-slate-500 hover:text-slate-800"
           >
             Skip for now →
           </button>
@@ -123,15 +123,15 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
         {step === 1 && (
           <div className="space-y-6 animate-fadeIn">
             <div>
-              <h2 className="text-xl font-extrabold text-white tracking-tight">Karibu to Msingi! 🌍</h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Karibu to Msingi! 🌍</h2>
+              <p className="text-xs text-slate-600 mt-1">
                 Let’s customize your preparation path for the Microsoft Azure Fundamentals (AZ-900) exam.
               </p>
             </div>
 
             <div className="space-y-3">
-              <label className="block text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
-                <Calendar className="w-4 h-4 text-sunset-400" />
+              <label className="block text-xs font-semibold text-slate-700 flex items-center space-x-1.5">
+                <Calendar className="w-4 h-4 text-blue-600" />
                 <span>When are you planning to sit the exam?</span>
               </label>
 
@@ -139,7 +139,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                 type="date"
                 value={examDate}
                 onChange={(e) => setExamDate(e.target.value)}
-                className="w-full bg-surface-light border border-surface-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sunset-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white"
               />
 
               {/* Quick Preset Buttons */}
@@ -158,7 +158,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                         .split('T')[0];
                       setExamDate(d);
                     }}
-                    className="py-2 px-1 text-[11px] font-semibold bg-surface-light border border-surface-border rounded-lg text-slate-300 hover:border-sunset-500/50 hover:text-white transition-colors"
+                    className="py-2 px-1 text-[11px] font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 hover:border-blue-500 hover:text-blue-700 transition-colors"
                   >
                     {preset.label}
                   </button>
@@ -168,7 +168,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
             <button
               onClick={() => setStep(2)}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 transition-transform active:scale-95"
+              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-transform active:scale-95"
             >
               <span>Continue to Step 2</span>
               <ArrowRight className="w-4 h-4" />
@@ -180,8 +180,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
         {step === 2 && (
           <div className="space-y-6 animate-fadeIn">
             <div>
-              <h2 className="text-xl font-extrabold text-white tracking-tight">Study Pace & Preferences</h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Study Pace & Preferences</h2>
+              <p className="text-xs text-slate-600 mt-1">
                 Realistic pacing helps build a daily habit without burnout.
               </p>
             </div>
@@ -189,11 +189,11 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
             {/* Weekly Hours Slider */}
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-300 flex items-center space-x-1.5">
-                  <Clock className="w-4 h-4 text-savannah-400" />
+                <span className="font-semibold text-slate-700 flex items-center space-x-1.5">
+                  <Clock className="w-4 h-4 text-emerald-600" />
                   <span>Available Study Time:</span>
                 </span>
-                <span className="font-extrabold text-sunset-400 text-sm">{weeklyHours} hrs / week</span>
+                <span className="font-extrabold text-blue-700 text-sm">{weeklyHours} hrs / week</span>
               </div>
               <input
                 type="range"
@@ -201,7 +201,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                 max={25}
                 value={weeklyHours}
                 onChange={(e) => setWeeklyHours(Number(e.target.value))}
-                className="w-full accent-sunset-500 bg-surface-light rounded-lg h-2"
+                className="w-full accent-blue-600 bg-slate-200 rounded-lg h-2"
               />
               <p className="text-[11px] text-slate-500">
                 ~{Math.round(weeklyHours / 7 * 60)} minutes per day of structured practice.
@@ -210,7 +210,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
             {/* Language Selector */}
             <div className="space-y-2 pt-2">
-              <label className="block text-xs font-semibold text-slate-300">
+              <label className="block text-xs font-semibold text-slate-700">
                 Rafiki AI Study Buddy Language
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -226,12 +226,12 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                     onClick={() => setLanguage(item.id as SupportedLanguage)}
                     className={`p-2.5 rounded-xl border text-left transition-all ${
                       language === item.id
-                        ? 'border-sunset-500 bg-sunset-500/10 text-white'
-                        : 'border-surface-border bg-surface-light text-slate-400 hover:border-slate-600'
+                        ? 'border-blue-600 bg-blue-50 text-blue-900'
+                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300'
                     }`}
                   >
                     <div className="font-bold text-xs">{item.label}</div>
-                    <div className="text-[10px] text-slate-400">{item.desc}</div>
+                    <div className="text-[10px] text-slate-500">{item.desc}</div>
                   </button>
                 ))}
               </div>
@@ -240,13 +240,13 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
             <div className="flex space-x-2 pt-2">
               <button
                 onClick={() => setStep(1)}
-                className="px-4 py-3 rounded-xl border border-surface-border text-xs font-semibold text-slate-400 hover:text-white"
+                className="px-4 py-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 transition-transform active:scale-95"
+                className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-transform active:scale-95"
               >
                 <span>Take 10-Q Diagnostic</span>
                 <ArrowRight className="w-4 h-4" />
@@ -260,14 +260,14 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
           <div className="space-y-5 animate-fadeIn">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-sunset-400">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-blue-700">
                   Question {currentDiagIdx + 1} of {diagnosticQuestions.length}
                 </span>
-                <h3 className="text-sm font-bold text-white mt-0.5">Diagnostic Evaluation</h3>
+                <h3 className="text-sm font-bold text-slate-900 mt-0.5">Diagnostic Evaluation</h3>
               </div>
-              <div className="w-20 bg-surface-light rounded-full h-1.5 overflow-hidden">
+              <div className="w-20 bg-slate-200 rounded-full h-1.5 overflow-hidden">
                 <div
-                  className="bg-sunset-500 h-full transition-all duration-300"
+                  className="bg-blue-600 h-full transition-all duration-300"
                   style={{ width: `${((currentDiagIdx + 1) / diagnosticQuestions.length) * 100}%` }}
                 />
               </div>
@@ -280,7 +280,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
               return (
                 <div className="space-y-4">
-                  <p className="text-xs font-medium text-slate-200 leading-relaxed bg-surface-light/50 p-3.5 rounded-2xl border border-surface-border">
+                  <p className="text-xs font-medium text-slate-800 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                     {currentQ.stem}
                   </p>
 
@@ -293,12 +293,12 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                           onClick={() => handleSelectOption(opt)}
                           className={`w-full text-left p-3 rounded-xl border text-xs transition-all flex items-start space-x-2.5 ${
                             isSelected
-                              ? 'border-sunset-500 bg-sunset-500/15 text-white font-semibold shadow-sm'
-                              : 'border-surface-border bg-surface-light text-slate-300 hover:border-slate-600'
+                              ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold shadow-sm'
+                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                           }`}
                         >
                           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5 font-bold ${
-                            isSelected ? 'bg-sunset-500 text-white' : 'bg-surface-border text-slate-400'
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 border border-slate-200'
                           }`}>
                             {String.fromCharCode(65 + oIdx)}
                           </span>
@@ -312,7 +312,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                     <button
                       disabled={currentDiagIdx === 0}
                       onClick={() => setCurrentDiagIdx(prev => prev - 1)}
-                      className="text-xs text-slate-400 hover:text-white disabled:opacity-30"
+                      className="text-xs text-slate-500 hover:text-slate-800 disabled:opacity-30"
                     >
                       ← Previous
                     </button>
@@ -321,7 +321,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                       <button
                         onClick={handleFinishOnboarding}
                         disabled={isFinishing}
-                        className="py-2.5 px-5 rounded-xl bg-savannah-500 hover:bg-savannah-600 text-white font-bold text-xs shadow-glow-green flex items-center space-x-1.5 transition-all"
+                        className="py-2.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center space-x-1.5 transition-all"
                       >
                         <CheckCircle2 className="w-4 h-4" />
                         <span>{isFinishing ? 'Saving...' : 'Finish & View Readiness'}</span>
@@ -329,7 +329,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
                     ) : (
                       <button
                         onClick={() => setCurrentDiagIdx(prev => prev + 1)}
-                        className="text-xs text-sunset-400 hover:text-sunset-300 font-semibold flex items-center space-x-1"
+                        className="text-xs text-blue-700 hover:text-blue-800 font-semibold flex items-center space-x-1"
                       >
                         <span>Next</span>
                         <ChevronRight className="w-4 h-4" />
@@ -345,4 +345,3 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
     </div>
   );
 };
-

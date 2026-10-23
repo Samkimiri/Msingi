@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --color-bg: #0a0e1a;
-    --color-surface: #111827;
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
   }
 
   body {
-    background-color: #0a0e1a;
-    color: #f1f5f9;
+    background-color: #f8fafc;
+    color: #1e293b;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
@@ -22,14 +22,14 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0e1a;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f293d;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
 
 /* Card flip 3D animation utilities */
@@ -46,4 +46,3 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
-

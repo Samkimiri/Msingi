@@ -233,6 +233,15 @@ export class StorageService {
           created_at: fullReport.created_at,
         }).then();
       }
+
+      // Also forward to Vercel backend /api/report
+      fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fullReport),
+      }).catch(() => {
+        // Silently ignore if offline
+      });
     } catch {
       // silently tolerate storage quota
     }

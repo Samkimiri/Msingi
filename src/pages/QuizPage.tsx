@@ -97,20 +97,12 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       }
     } else if (selectedMode === 'mock') {
       // 40 questions representative simulation
-      // Duplicate & shuffle pool to reach 40 questions
-      const shuffled = [...SEED_QUESTIONS].sort(() => 0.5 - Math.random());
-      pool = [];
-      while (pool.length < 40) {
-        pool.push(...shuffled);
-      }
-      pool = pool.slice(0, 40).map((q, idx) => ({ ...q, id: `${q.id}-mock-${idx}` }));
+      pool = [...SEED_QUESTIONS, ...SEED_QUESTIONS].slice(0, 40);
     }
 
-    if (pool.length === 0) {
-      pool = SEED_QUESTIONS.slice(0, 5);
-    }
-
-    setQuestions(pool);
+    // Shuffle pool
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    setQuestions(shuffled);
     setCurrentIndex(0);
     setSelectedOptions([]);
     setIsAnswerSubmitted(false);
@@ -118,7 +110,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
     setIsMockCompleted(false);
     setMockAnswers({});
 
-    // Start timer for mock exam
+    // Start timer if Mock Exam
     if (selectedMode === 'mock') {
       setTimeRemainingSeconds(45 * 60);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -143,60 +135,61 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
   const currentQuestion = questions[currentIndex];
 
-  const handleSelectOption = (opt: string) => {
+  const handleSelectOption = (option: string) => {
     if (isAnswerSubmitted && selectedMode !== 'mock') return;
 
     if (currentQuestion.type === 'multiple') {
-      // Multi-select
-      setSelectedOptions(prev =>
-        prev.includes(opt) ? prev.filter(o => o !== opt) : [...prev, opt]
-      );
+      // Multi-select toggle
+      if (selectedOptions.includes(option)) {
+        setSelectedOptions(selectedOptions.filter(o => o !== option));
+      } else {
+        if (selectedOptions.length < currentQuestion.correct.length) {
+          setSelectedOptions([...selectedOptions, option]);
+        }
+      }
     } else {
-      // Single choice
-      setSelectedOptions([opt]);
+      // Single select
+      setSelectedOptions([option]);
     }
   };
 
   const handleCheckAnswer = () => {
     if (selectedOptions.length === 0) return;
 
-    // Check correctness
     const isCorrect =
       currentQuestion.correct.length === selectedOptions.length &&
       currentQuestion.correct.every(c => selectedOptions.includes(c));
 
-    // Save attempt
-    StorageService.saveAttempt({
-      id: `att-${Date.now()}`,
-      question_id: currentQuestion.id.split('-mock-')[0],
-      selected: selectedOptions,
-      is_correct: isCorrect,
-      time_ms: 12000,
-      created_at: new Date().toISOString(),
-    });
-
     setIsAnswerSubmitted(true);
 
     if (isCorrect) {
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      // Confetti celebration on 5-streak
-      if (newStreak % 5 === 0) {
-        confetti({
-          particleCount: 80,
-          spread: 60,
-          origin: { y: 0.8 },
-          colors: ['#F97316', '#10B981', '#38BDF8'],
-        });
-      }
+      setStreak(prev => prev + 1);
+      confetti({
+        particleCount: 40,
+        spread: 60,
+        origin: { y: 0.8 },
+      });
     } else {
       setStreak(0);
+      // Auto-add to custom flashcards on incorrect attempt
+      StorageService.addFlashcardFromQuestion(currentQuestion);
     }
+
+    // Save attempt to storage
+    const attempt: Attempt = {
+      id: `att-${Date.now()}`,
+      question_id: currentQuestion.id,
+      selected: selectedOptions,
+      is_correct: isCorrect,
+      time_ms: 10000,
+      created_at: new Date().toISOString(),
+    };
+    StorageService.saveAttempt(attempt);
   };
 
   const handleNextQuestion = () => {
+    // Record mock answer if in mock mode
     if (selectedMode === 'mock') {
-      // Record mock answer
       setMockAnswers(prev => ({
         ...prev,
         [currentQuestion.id]: selectedOptions,
@@ -284,19 +277,19 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       {!isQuizActive && (
         <div className="space-y-6 animate-fadeIn">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sunset-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               Exam Practice
             </span>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight mt-1">
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
               Smart Quiz Builder
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-600 mt-1">
               Original scenario-based questions grounded in the official Microsoft Learn syllabus.
             </p>
           </div>
 
           {/* Mode Switcher Tabs */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 bg-surface rounded-2xl border border-surface-border">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 bg-white rounded-2xl border border-slate-200 shadow-sm">
             {[
               { id: 'domain', label: 'By Domain', desc: 'Weighted modules' },
               { id: 'topic', label: 'By Topic', desc: 'Targeted skill' },
@@ -308,8 +301,8 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                 onClick={() => setSelectedMode(tab.id as any)}
                 className={`py-2.5 px-3 rounded-xl text-left transition-all ${
                   selectedMode === tab.id
-                    ? 'bg-gradient-to-r from-sunset-500 to-amber-600 text-white font-bold shadow-glow-orange'
-                    : 'text-slate-400 hover:text-white hover:bg-surface-light'
+                    ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 <div className="text-xs font-bold">{tab.label}</div>
@@ -319,10 +312,10 @@ export const QuizPage: React.FC<QuizPageProps> = ({
           </div>
 
           {/* Configuration Card based on Mode */}
-          <div className="p-5 rounded-2xl bg-surface border border-surface-border space-y-4">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200 space-y-4 shadow-sm">
             {selectedMode === 'domain' && (
               <div className="space-y-3">
-                <label className="text-xs font-semibold text-slate-300 block">
+                <label className="text-xs font-semibold text-slate-700 block">
                   Select AZ-900 Domain:
                 </label>
                 <div className="space-y-2">
@@ -330,20 +323,20 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                     <button
                       key={dom.id}
                       onClick={() => setSelectedDomainId(dom.id)}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between ${
+                      className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
                         selectedDomainId === dom.id
-                          ? 'border-sunset-500 bg-sunset-500/10 text-white'
-                          : 'border-surface-border bg-surface-light text-slate-300 hover:border-slate-600'
+                          ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold shadow-sm'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                       }`}
                     >
                       <div>
                         <div className="text-xs font-bold">{dom.name}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-slate-500 mt-0.5">
                           Exam Weight: {dom.weight_min_pct}-{dom.weight_max_pct}%
                         </div>
                       </div>
                       {selectedDomainId === dom.id && (
-                        <Check className="w-4 h-4 text-sunset-400" />
+                        <Check className="w-4 h-4 text-blue-700" />
                       )}
                     </button>
                   ))}
@@ -353,13 +346,13 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
             {selectedMode === 'topic' && (
               <div className="space-y-3">
-                <label className="text-xs font-semibold text-slate-300 block">
+                <label className="text-xs font-semibold text-slate-700 block">
                   Select Specific Topic (30 Outline Skills):
                 </label>
                 <select
                   value={selectedTopicId}
                   onChange={e => setSelectedTopicId(e.target.value)}
-                  className="w-full bg-surface-light border border-surface-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-sunset-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white"
                 >
                   {TOPICS.map(t => (
                     <option key={t.id} value={t.id}>
@@ -367,7 +360,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                     </option>
                   ))}
                 </select>
-                <p className="text-[11px] text-slate-400 italic">
+                <p className="text-[11px] text-slate-500 italic">
                   {TOPICS.find(t => t.id === selectedTopicId)?.summary}
                 </p>
               </div>
@@ -375,11 +368,11 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
             {selectedMode === 'weak' && (
               <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-amber-400">
-                  <Filter className="w-4 h-4" />
+                <div className="flex items-center space-x-2 text-amber-700">
+                  <Filter className="w-4 h-4 text-amber-600" />
                   <span className="text-xs font-bold">Targeted Weak Topic Practice</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Focuses questions strictly on concepts where your historical accuracy is under 60%. Perfect for efficient, high-impact revision.
                 </p>
               </div>
@@ -387,22 +380,22 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
             {selectedMode === 'mock' && (
               <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-sunset-400">
-                  <Trophy className="w-4 h-4" />
+                <div className="flex items-center space-x-2 text-blue-700">
+                  <Trophy className="w-4 h-4 text-blue-600" />
                   <span className="text-xs font-bold">Official Exam Simulation</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   40 questions weighted across all 3 domains with a strict 45-minute countdown. Instant explanations are suppressed until the final submission to mirror the real testing environment.
                 </p>
-                <div className="p-3 bg-surface-light rounded-xl border border-surface-border text-[11px] text-slate-300">
-                  Passing target: <strong className="text-white">700 / 1000 (70%)</strong>. Score 80%+ twice to qualify for the <strong className="text-savannah-400">Exam Ready</strong> badge.
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-700">
+                  Passing target: <strong className="text-slate-900">700 / 1000 (70%)</strong>. Score 80%+ twice to qualify for the <strong className="text-emerald-700">Exam Ready</strong> badge.
                 </div>
               </div>
             )}
 
             <button
               onClick={startQuiz}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 hover:from-sunset-600 hover:to-amber-700 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 transition-all active:scale-98"
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-98"
             >
               <span>{selectedMode === 'mock' ? 'Begin 40-Q Mock Exam' : 'Start Practice Quiz'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -415,13 +408,13 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       {isQuizActive && !isMockCompleted && currentQuestion && (
         <div className="space-y-5 animate-fadeIn">
           {/* Top Progress & Timer Bar */}
-          <div className="flex items-center justify-between pb-3 border-b border-surface-border">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-slate-200">
+              <span className="text-xs font-bold text-slate-800">
                 Question {currentIndex + 1} of {questions.length}
               </span>
               {currentQuestion.type === 'multiple' && (
-                <span className="text-[10px] bg-dusk-500/20 text-dusk-400 font-semibold px-2 py-0.5 rounded border border-dusk-500/30">
+                <span className="text-[10px] bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded border border-blue-200">
                   Select {currentQuestion.correct.length}
                 </span>
               )}
@@ -430,14 +423,14 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             <div className="flex items-center space-x-3">
               {/* Streak pill */}
               {streak > 0 && selectedMode !== 'mock' && (
-                <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30 flex items-center space-x-1">
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 flex items-center space-x-1">
                   <span>🔥 {streak} streak</span>
                 </span>
               )}
 
               {/* Timer for Mock */}
               {selectedMode === 'mock' && (
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-sunset-400 bg-surface-light px-3 py-1 rounded-full border border-surface-border">
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{formatTimer(timeRemainingSeconds)}</span>
                 </div>
@@ -445,7 +438,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
               <button
                 onClick={() => setIsQuizActive(false)}
-                className="text-xs text-slate-400 hover:text-white"
+                className="text-xs text-slate-500 hover:text-slate-800"
               >
                 Quit
               </button>
@@ -453,22 +446,22 @@ export const QuizPage: React.FC<QuizPageProps> = ({
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-surface-light h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-sunset-500 h-full transition-all duration-300"
+              className="bg-blue-600 h-full transition-all duration-300"
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
 
           {/* Question Stem Card */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-surface border border-surface-border space-y-4">
-            <div className="flex items-center justify-between text-[11px] text-slate-400">
-              <span className="font-semibold text-sunset-400">
+          <div className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between text-[11px] text-slate-500">
+              <span className="font-semibold text-blue-700">
                 {TOPICS.find(t => t.id === currentQuestion.topic_id)?.title}
               </span>
               <button
                 onClick={() => setReportQuestionId(currentQuestion.id)}
-                className="hover:text-slate-200 flex items-center space-x-1"
+                className="hover:text-slate-800 flex items-center space-x-1"
                 title="Report issue with this question"
               >
                 <AlertCircle className="w-3.5 h-3.5" />
@@ -476,7 +469,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
               </button>
             </div>
 
-            <p className="text-sm sm:text-base font-semibold text-white leading-relaxed">
+            <p className="text-sm sm:text-base font-bold text-slate-900 leading-relaxed">
               {currentQuestion.stem}
             </p>
 
@@ -487,37 +480,37 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                 const isCorrect = currentQuestion.correct.includes(option);
 
                 // Styling logic based on submission state (only revealed in practice modes)
-                let itemStyle = 'border-surface-border bg-surface-light text-slate-200 hover:border-slate-600';
+                let itemStyle = 'border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50';
 
                 if (selectedMode !== 'mock' && isAnswerSubmitted) {
                   if (isCorrect) {
-                    itemStyle = 'border-savannah-500 bg-savannah-500/15 text-white font-semibold';
+                    itemStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold';
                   } else if (isSelected && !isCorrect) {
-                    itemStyle = 'border-red-500 bg-red-500/15 text-white';
+                    itemStyle = 'border-rose-400 bg-rose-50 text-rose-950 font-semibold';
                   } else {
-                    itemStyle = 'border-surface-border bg-surface-light/50 text-slate-400 opacity-60';
+                    itemStyle = 'border-slate-200 bg-slate-50/50 text-slate-400 opacity-60';
                   }
                 } else if (isSelected) {
-                  itemStyle = 'border-sunset-500 bg-sunset-500/20 text-white font-semibold';
+                  itemStyle = 'border-blue-600 bg-blue-50 text-blue-900 font-semibold shadow-sm';
                 }
 
                 return (
                   <button
                     key={idx}
                     onClick={() => handleSelectOption(option)}
-                    className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-start space-x-3 ${itemStyle}`}
+                    className={`w-full text-left p-3.5 rounded-2xl border text-xs sm:text-sm transition-all flex items-start space-x-3 ${itemStyle}`}
                   >
                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 mt-0.5 font-bold ${
-                      isSelected ? 'bg-sunset-500 text-white' : 'bg-surface-border text-slate-400'
+                      isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
                     }`}>
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <span className="flex-1 leading-snug">{option}</span>
                     {selectedMode !== 'mock' && isAnswerSubmitted && isCorrect && (
-                      <CheckCircle2 className="w-4 h-4 text-savannah-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     )}
                     {selectedMode !== 'mock' && isAnswerSubmitted && isSelected && !isCorrect && (
-                      <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                      <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                     )}
                   </button>
                 );
@@ -530,7 +523,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             <button
               onClick={handleCheckAnswer}
               disabled={selectedOptions.length === 0}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 hover:from-sunset-600 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 disabled:opacity-40 transition-all active:scale-98"
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 disabled:opacity-40 transition-all active:scale-98"
             >
               <span>Submit Answer</span>
               <Check className="w-4 h-4" />
@@ -539,16 +532,16 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
           {/* INSTANT EXPLANATION PANEL (Practice Modes) */}
           {selectedMode !== 'mock' && isAnswerSubmitted && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-surface border border-surface-border space-y-4 animate-fadeIn">
+            <div className="p-5 rounded-3xl bg-white border border-slate-200 space-y-4 animate-fadeIn shadow-sm">
               <div className="flex items-center space-x-2">
                 {currentQuestion.correct.every(c => selectedOptions.includes(c)) &&
                 currentQuestion.correct.length === selectedOptions.length ? (
-                  <div className="flex items-center space-x-2 text-savannah-400 font-bold text-sm">
+                  <div className="flex items-center space-x-2 text-emerald-700 font-bold text-sm">
                     <CheckCircle2 className="w-5 h-5" />
                     <span>Hongera! Correct Answer</span>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-2 text-red-400 font-bold text-sm">
+                  <div className="flex items-center space-x-2 text-rose-700 font-bold text-sm">
                     <XCircle className="w-5 h-5" />
                     <span>Not quite right — Learn from this!</span>
                   </div>
@@ -557,10 +550,10 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
               {/* Core Explanation */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   Why this is correct:
                 </span>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-surface-light p-3.5 rounded-xl border border-surface-border">
+                <p className="text-xs sm:text-sm text-slate-800 leading-relaxed bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
                   {currentQuestion.explanation}
                 </p>
               </div>
@@ -568,14 +561,14 @@ export const QuizPage: React.FC<QuizPageProps> = ({
               {/* Why Wrong Options are Wrong */}
               {Object.keys(currentQuestion.wrong_option_notes).length > 0 && (
                 <div className="space-y-2 pt-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                     Why other choices are incorrect:
                   </span>
                   <div className="space-y-1.5">
                     {Object.entries(currentQuestion.wrong_option_notes).map(([optName, note], nIdx) => (
-                      <div key={nIdx} className="text-xs text-slate-300 p-2.5 rounded-lg bg-surface-light/40 border border-surface-border/60">
-                        <strong className="text-slate-400 block mb-0.5">• {optName}:</strong>
-                        <span className="text-slate-300">{note}</span>
+                      <div key={nIdx} className="text-xs text-slate-700 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                        <strong className="text-slate-900 block mb-0.5">• {optName}:</strong>
+                        <span>{note}</span>
                       </div>
                     ))}
                   </div>
@@ -586,15 +579,15 @@ export const QuizPage: React.FC<QuizPageProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                 <button
                   onClick={handleAddToFlashcards}
-                  className="py-2.5 px-3 rounded-xl bg-surface-light hover:bg-surface-border border border-surface-border text-xs font-semibold text-slate-200 flex items-center justify-center space-x-1.5 transition-colors"
+                  className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 flex items-center justify-center space-x-1.5 transition-colors"
                 >
-                  <BookmarkPlus className="w-4 h-4 text-sunset-400" />
+                  <BookmarkPlus className="w-4 h-4 text-blue-600" />
                   <span>Add to My Flashcards</span>
                 </button>
 
                 <button
                   onClick={() => onOpenRafikiWithQuestion?.(currentQuestion)}
-                  className="py-2.5 px-3 rounded-xl bg-sunset-500/15 hover:bg-sunset-500/25 border border-sunset-500/40 text-xs font-bold text-sunset-300 flex items-center justify-center space-x-1.5 transition-colors"
+                  className="py-2.5 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-xs font-bold text-blue-700 flex items-center justify-center space-x-1.5 transition-colors"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Explain Simply with Rafiki</span>
@@ -602,18 +595,18 @@ export const QuizPage: React.FC<QuizPageProps> = ({
               </div>
 
               {cardAddedMessage && (
-                <p className="text-xs text-savannah-400 font-semibold text-center animate-fadeIn">
+                <p className="text-xs text-emerald-700 font-semibold text-center animate-fadeIn">
                   {cardAddedMessage}
                 </p>
               )}
 
               {/* Source Link */}
-              <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400 border-t border-surface-border">
+              <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-100">
                 <a
                   href={currentQuestion.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sunset-400 hover:underline flex items-center space-x-1"
+                  className="text-blue-700 hover:underline flex items-center space-x-1"
                 >
                   <span>Revise on Microsoft Learn</span>
                   <ExternalLink className="w-3 h-3" />
@@ -623,7 +616,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
               {/* Next Question button */}
               <button
                 onClick={handleNextQuestion}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 hover:from-sunset-600 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 transition-all active:scale-98 mt-3"
+                className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-98 mt-3"
               >
                 <span>{currentIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -636,7 +629,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             <button
               onClick={handleNextQuestion}
               disabled={selectedOptions.length === 0}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sunset-500 to-amber-600 hover:from-sunset-600 text-white font-bold text-sm shadow-glow-orange flex items-center justify-center space-x-2 disabled:opacity-40 transition-all active:scale-98"
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 disabled:opacity-40 transition-all active:scale-98"
             >
               <span>{currentIndex < questions.length - 1 ? 'Record & Next Question' : 'Submit Mock Exam'}</span>
               <ChevronRight className="w-4 h-4" />
@@ -647,37 +640,37 @@ export const QuizPage: React.FC<QuizPageProps> = ({
 
       {/* MOCK EXAM RESULTS VIEW */}
       {isMockCompleted && mockExamResult && (
-        <div className="p-6 rounded-3xl bg-surface border border-surface-border space-y-6 text-center animate-fadeIn">
-          <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center bg-gradient-to-br from-sunset-500 to-amber-600 shadow-glow-orange">
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-6 text-center animate-fadeIn shadow-sm">
+          <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md shadow-blue-500/20">
             <Trophy className="w-8 h-8 text-white" />
           </div>
 
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sunset-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               Mock Exam Result
             </span>
-            <h2 className="text-3xl font-extrabold text-white mt-1">
+            <h2 className="text-3xl font-extrabold text-slate-900 mt-1">
               {mockExamResult.score_pct}% Score
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Time taken: {formatTimer(mockExamResult.duration_seconds)} • Required to pass: 70%
             </p>
           </div>
 
           {/* Domain Breakdown Bars */}
           <div className="space-y-3 text-left pt-2">
-            <h4 className="text-xs font-bold text-slate-300">Domain Performance:</h4>
+            <h4 className="text-xs font-bold text-slate-700">Domain Performance:</h4>
             {DOMAINS.map(d => {
               const stat = mockExamResult.domain_breakdown[d.id] || { total: 0, correct: 0, pct: 0 };
               return (
-                <div key={d.id} className="p-3 bg-surface-light rounded-xl border border-surface-border space-y-1.5">
+                <div key={d.id} className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-slate-200">{d.name}</span>
-                    <span className="font-bold text-sunset-400">{stat.pct}% ({stat.correct}/{stat.total})</span>
+                    <span className="font-semibold text-slate-800">{d.name}</span>
+                    <span className="font-bold text-blue-700">{stat.pct}% ({stat.correct}/{stat.total})</span>
                   </div>
-                  <div className="w-full bg-surface-border h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                     <div
-                      className={`h-full ${stat.pct >= 70 ? 'bg-savannah-500' : 'bg-red-500'}`}
+                      className={`h-full ${stat.pct >= 70 ? 'bg-emerald-600' : 'bg-rose-500'}`}
                       style={{ width: `${stat.pct}%` }}
                     />
                   </div>
@@ -689,7 +682,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
           <div className="flex space-x-3 pt-4">
             <button
               onClick={() => onNavigate('home')}
-              className="flex-1 py-3 rounded-xl border border-surface-border text-xs font-bold text-slate-200 hover:bg-surface-light"
+              className="flex-1 py-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50"
             >
               Go to Dashboard
             </button>
@@ -698,7 +691,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                 setIsQuizActive(false);
                 setIsMockCompleted(false);
               }}
-              className="flex-1 py-3 rounded-xl bg-sunset-500 hover:bg-sunset-600 text-white font-bold text-xs shadow-glow-orange"
+              className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20"
             >
               Take Another Quiz
             </button>
@@ -718,4 +711,3 @@ export const QuizPage: React.FC<QuizPageProps> = ({
     </div>
   );
 };
-

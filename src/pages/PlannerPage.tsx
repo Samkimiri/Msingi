@@ -63,13 +63,6 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
   const handleReplan = () => {
     if (!plan) return;
 
-    // Identify current weak topics from attempts
-    const attempts = StorageService.getAttempts();
-    const topicStats: Record<string, { total: number; correct: number }> = {};
-    attempts.forEach(a => {
-      const q = StorageService.getAttempts();
-    });
-
     const weakTopicIds = plan.weak_topics || [];
     const { plan: newPlan, tasks: newTasks } = generateStudyPlan(
       plan.exam_date,
@@ -140,12 +133,12 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="w-8 h-8 rounded-xl bg-savannah-500/20 text-savannah-400 flex items-center justify-center">
+            <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
               <CalendarIcon className="w-4 h-4" />
             </span>
-            <h1 className="text-xl font-extrabold text-white">Deterministic Study Planner</h1>
+            <h1 className="text-xl font-extrabold text-slate-900">Deterministic Study Planner</h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             Grounded in AZ-900 domain weights, your available weekly hours, and target exam date.
           </p>
         </div>
@@ -153,15 +146,15 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={handleExportIcs}
-            className="px-3 py-2 bg-surface hover:bg-surface-light border border-surface-border text-slate-200 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
             title="Download .ics calendar file for Apple/Google/Outlook calendar"
           >
-            <Download className="w-3.5 h-3.5 text-savannah-400" />
+            <Download className="w-3.5 h-3.5 text-blue-600" />
             <span>Export Calendar (.ics)</span>
           </button>
           <button
             onClick={handleReplan}
-            className="px-3 py-2 bg-sunset-600 hover:bg-sunset-500 text-white text-xs font-bold rounded-xl shadow-glow-orange flex items-center space-x-1.5 transition-all"
+            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center space-x-1.5 transition-all"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Re-plan from Today</span>
@@ -170,57 +163,57 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
       </div>
 
       {replanSuccess && (
-        <div className="p-3 bg-savannah-500/10 border border-savannah-500/30 rounded-xl text-xs text-savannah-300 flex items-center space-x-2 animate-fadeIn">
-          <Check className="w-4 h-4 text-savannah-400" />
-          <span>Schedule re-calculated successfully starting from today!</span>
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center space-x-2 animate-fadeIn shadow-sm">
+          <Check className="w-4 h-4 text-emerald-600" />
+          <span className="font-medium">Schedule re-calculated successfully starting from today!</span>
         </div>
       )}
 
       {/* Target Exam Date & Overall Progress Card */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-surface border border-surface-border rounded-2xl p-4 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Target Exam Date
           </span>
           <div className="my-2">
-            <span className="text-2xl font-extrabold text-white">
+            <span className="text-2xl font-extrabold text-slate-900">
               {plan?.exam_date ? new Date(plan.exam_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Not set'}
             </span>
           </div>
-          <span className="text-xs text-sunset-400 font-semibold">
+          <span className="text-xs text-blue-700 font-semibold">
             {daysUntilExam !== null ? `${daysUntilExam} days remaining` : 'Configure your target date'}
           </span>
         </div>
 
-        <div className="bg-surface border border-surface-border rounded-2xl p-4 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Tasks Completed
           </span>
           <div className="my-2">
-            <span className="text-2xl font-extrabold text-white">
-              {completedTasks} <span className="text-sm text-slate-500">/ {totalTasks}</span>
+            <span className="text-2xl font-extrabold text-slate-900">
+              {completedTasks} <span className="text-sm text-slate-400">/ {totalTasks}</span>
             </span>
           </div>
-          <div className="w-full bg-surface-light rounded-full h-2 overflow-hidden border border-surface-border">
+          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
             <div
-              className="h-full bg-savannah-500 rounded-full transition-all duration-500"
+              className="h-full bg-emerald-600 rounded-full transition-all duration-500"
               style={{ width: `${completionPct}%` }}
             />
           </div>
         </div>
 
-        <div className="bg-surface border border-surface-border rounded-2xl p-4 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Weekly Study Pace
           </span>
           <div className="my-2">
-            <span className="text-2xl font-extrabold text-white">
-              {profile.weekly_hours} hrs <span className="text-xs text-slate-400 font-normal">/ week</span>
+            <span className="text-2xl font-extrabold text-slate-900">
+              {profile.weekly_hours} hrs <span className="text-xs text-slate-500 font-normal">/ week</span>
             </span>
           </div>
           <button
             onClick={onRetakeOnboarding}
-            className="text-[11px] text-sunset-400 hover:underline text-left"
+            className="text-[11px] text-blue-700 hover:text-blue-800 font-semibold text-left underline"
           >
             Adjust weekly study hours
           </button>
@@ -228,33 +221,33 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center space-x-2 border-b border-surface-border pb-2 text-xs">
+      <div className="flex items-center space-x-2 border-b border-slate-200 pb-2 text-xs">
         <button
           onClick={() => setFilter('upcoming')}
-          className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
             filter === 'upcoming'
-              ? 'bg-sunset-600 text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Today & Upcoming
         </button>
         <button
           onClick={() => setFilter('all')}
-          className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
             filter === 'all'
-              ? 'bg-sunset-600 text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           All Tasks ({totalTasks})
         </button>
         <button
           onClick={() => setFilter('completed')}
-          className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
             filter === 'completed'
-              ? 'bg-sunset-600 text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Completed ({completedTasks})
@@ -263,10 +256,10 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
 
       {/* Task List Grouped by Day */}
       {sortedDates.length === 0 ? (
-        <div className="bg-surface border border-surface-border rounded-2xl p-8 text-center max-w-md mx-auto space-y-3">
-          <CalendarCheck className="w-10 h-10 text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-white">No tasks in this view</h3>
-          <p className="text-xs text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 text-center max-w-md mx-auto space-y-3 shadow-sm">
+          <CalendarCheck className="w-10 h-10 text-slate-400 mx-auto" />
+          <h3 className="text-base font-bold text-slate-900">No tasks in this view</h3>
+          <p className="text-xs text-slate-500">
             {filter === 'completed'
               ? 'You have not checked off any tasks yet.'
               : 'All scheduled tasks have passed or been completed!'}
@@ -281,24 +274,24 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
             return (
               <div
                 key={dateStr}
-                className={`bg-surface border rounded-2xl p-4 sm:p-5 space-y-3 transition-colors ${
+                className={`bg-white border rounded-3xl p-4 sm:p-5 space-y-3 transition-colors shadow-sm ${
                   isToday
-                    ? 'border-sunset-500/50 shadow-glow-orange/10 bg-gradient-to-br from-surface to-surface-light'
-                    : 'border-surface-border'
+                    ? 'border-blue-400 bg-gradient-to-br from-blue-50/40 via-white to-white ring-2 ring-blue-500/10'
+                    : 'border-slate-200'
                 }`}
               >
-                <div className="flex items-center justify-between border-b border-surface-border/60 pb-2.5">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                   <div className="flex items-center space-x-2">
                     <span
                       className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                         isToday
-                          ? 'bg-sunset-500 text-white'
-                          : 'bg-surface-light text-slate-300 border border-surface-border'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
                       {formatDateHeading(dateStr)}
                     </span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-500">
                       {new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -306,7 +299,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
                       })}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-slate-500 font-medium">
                     {dayTasks.filter(t => t.is_completed).length}/{dayTasks.length} done
                   </span>
                 </div>
@@ -315,37 +308,37 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
                 <div className="space-y-2">
                   {dayTasks.map(task => {
                     const isCompleted = task.is_completed;
-                    let typeBadge = 'bg-blue-500/20 text-blue-400';
-                    if (task.task_type === 'quiz') typeBadge = 'bg-sunset-500/20 text-sunset-400';
-                    if (task.task_type === 'flashcards') typeBadge = 'bg-amber-500/20 text-amber-400';
-                    if (task.task_type === 'mock') typeBadge = 'bg-purple-500/20 text-purple-400';
-                    if (task.task_type === 'review') typeBadge = 'bg-emerald-500/20 text-emerald-400';
+                    let typeBadge = 'bg-blue-50 text-blue-700 border border-blue-200';
+                    if (task.task_type === 'quiz') typeBadge = 'bg-indigo-50 text-indigo-700 border border-indigo-200';
+                    if (task.task_type === 'flashcards') typeBadge = 'bg-amber-50 text-amber-700 border border-amber-200';
+                    if (task.task_type === 'mock') typeBadge = 'bg-purple-50 text-purple-700 border border-purple-200';
+                    if (task.task_type === 'review') typeBadge = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
 
                     return (
                       <div
                         key={task.id}
                         onClick={() => handleToggleTask(task.id)}
-                        className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                        className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
                           isCompleted
-                            ? 'bg-surface-light/40 border-surface-border text-slate-500'
-                            : 'bg-surface hover:bg-surface-light border-surface-border hover:border-slate-700 text-slate-200'
+                            ? 'bg-slate-50/80 border-slate-200 text-slate-400'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
                         }`}
                       >
                         <div className="flex items-center space-x-3 min-w-0 pr-3">
                           <button
                             type="button"
-                            className="flex-shrink-0 text-slate-400 hover:text-white"
+                            className="flex-shrink-0 text-slate-400 hover:text-slate-600"
                           >
                             {isCompleted ? (
-                              <CheckCircle2 className="w-5 h-5 text-savannah-400 fill-savannah-500/20" />
+                              <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
                             ) : (
-                              <Circle className="w-5 h-5 text-slate-500" />
+                              <Circle className="w-5 h-5 text-slate-400" />
                             )}
                           </button>
                           <div className="min-w-0">
                             <p
                               className={`text-xs font-semibold ${
-                                isCompleted ? 'line-through text-slate-400' : 'text-slate-200'
+                                isCompleted ? 'line-through text-slate-400' : 'text-slate-800'
                               }`}
                             >
                               {task.title}
@@ -354,7 +347,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
                               <span className={`text-[10px] font-bold uppercase px-1.5 py-0.2 rounded ${typeBadge}`}>
                                 {task.task_type}
                               </span>
-                              <span className="text-[10px] text-slate-400 flex items-center space-x-1">
+                              <span className="text-[10px] text-slate-500 flex items-center space-x-1">
                                 <Clock className="w-3 h-3 inline mr-0.5" />
                                 <span>{task.estimated_minutes} min</span>
                               </span>
@@ -375,7 +368,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
                                 onNavigate('quiz', { mode: 'mock' });
                               }
                             }}
-                            className="flex-shrink-0 text-[11px] font-bold text-sunset-400 hover:text-sunset-300 bg-sunset-500/10 hover:bg-sunset-500/20 px-2.5 py-1 rounded-lg border border-sunset-500/30 flex items-center space-x-1"
+                            className="flex-shrink-0 text-[11px] font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200 flex items-center space-x-1"
                           >
                             <span>Start</span>
                             <ArrowRight className="w-3 h-3" />
@@ -393,4 +386,3 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
     </div>
   );
 };
-

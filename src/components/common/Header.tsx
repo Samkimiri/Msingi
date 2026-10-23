@@ -17,24 +17,24 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-surface-border">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand / Logo */}
         <div 
           onClick={() => onNavigate('home')}
           className="flex items-center space-x-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sunset-500 to-sunset-700 flex items-center justify-center shadow-glow-orange group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
             <span className="text-white font-extrabold text-lg tracking-tight">M</span>
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-lg text-white tracking-tight">Msingi</span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded bg-sunset-500/20 text-sunset-400 border border-sunset-500/30">
+              <span className="font-bold text-lg text-slate-900 tracking-tight">Msingi</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                 AZ-900
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium">Foundation for Cloud Success</p>
+            <p className="text-[10px] text-slate-500 font-medium">Foundation for Cloud Success</p>
           </div>
         </div>
 
@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Streak indicator */}
           <div 
             title="Active learning streak"
-            className="flex items-center space-x-1 bg-surface-light/80 border border-surface-border px-2.5 py-1 rounded-full text-xs font-semibold text-amber-400"
+            className="flex items-center space-x-1 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full text-xs font-semibold text-amber-700"
           >
             <Flame className="w-4 h-4 fill-amber-500 text-amber-500 animate-pulse" />
             <span>{streakDays}d</span>
@@ -54,18 +54,18 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onNavigate('accuracy')}
             className={`hidden sm:flex items-center space-x-1 text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
               currentPage === 'accuracy'
-                ? 'bg-savannah-500/20 text-savannah-400 border-savannah-500/40'
-                : 'text-slate-300 border-surface-border hover:bg-surface-light'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-semibold'
+                : 'text-slate-600 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Accuracy</span>
           </button>
 
           {/* Quick Rafiki AI Buddy button */}
           <button
             onClick={onOpenRafiki}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-sunset-500 to-amber-600 hover:from-sunset-600 hover:to-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-glow-orange transition-all hover:scale-105 active:scale-95"
+            className="flex items-center space-x-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span className="hidden xs:inline">Ask</span>
@@ -76,4 +76,3 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
-
