@@ -11,7 +11,7 @@ interface PatternProps {
  * Pans diagonally and seamlessly via pure CSS keyframe (9s linear).
  */
 export const Pattern: React.FC<PatternProps> = ({ variant, prefersReducedMotion }) => {
-  const opacity = variant === 'calm' ? 'opacity-[0.035]' : 'opacity-[0.05]';
+  const opacity = variant === 'calm' ? 'opacity-[0.04]' : 'opacity-[0.06]';
 
   return (
     <div

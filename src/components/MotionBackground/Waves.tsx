@@ -25,10 +25,10 @@ export const Waves: React.FC<WavesProps> = ({
   const speedClass3 = prefersReducedMotion ? '' : isCalm ? 'animate-wave-slow-3' : 'animate-wave-3';
 
   return (
-    <div className="absolute inset-x-0 bottom-0 h-44 sm:h-56 pointer-events-none overflow-hidden">
+    <div className="absolute inset-x-0 bottom-0 h-52 sm:h-64 pointer-events-none overflow-hidden">
       {/* Wave 3: Back Wave (Savannah Green #059669) - omitted in low-power */}
       {!isLowPower && (
-        <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.14] ${speedClass3}`}>
+        <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.16] ${speedClass3}`}>
           <svg
             className="w-full h-full"
             viewBox="0 0 1200 120"
@@ -43,7 +43,7 @@ export const Waves: React.FC<WavesProps> = ({
       )}
 
       {/* Wave 2: Mid Wave (Dusk Indigo #4f46e5) - scrolls in reverse */}
-      <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.18] ${speedClass2}`}>
+      <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.22] ${speedClass2}`}>
         <svg
           className="w-full h-full"
           viewBox="0 0 1200 120"
@@ -57,7 +57,7 @@ export const Waves: React.FC<WavesProps> = ({
       </div>
 
       {/* Wave 1: Front Wave (Azure Brand Blue #0078d4) */}
-      <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.22] ${speedClass1}`}>
+      <div className={`absolute bottom-0 left-0 w-[200%] h-full opacity-[0.26] ${speedClass1}`}>
         <svg
           className="w-full h-full"
           viewBox="0 0 1200 120"

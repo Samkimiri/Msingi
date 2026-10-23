@@ -70,10 +70,10 @@ export const Bubbles: React.FC<BubblesProps> = ({
               animationDuration: `${b.swayDuration}s`,
               animationIterationCount: 'infinite',
               animationTimingFunction: 'ease-in-out',
-              border: `1px solid ${b.borderColor}`,
+              border: `1.5px solid ${b.borderColor}`,
               background:
-                'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.20) 45%, rgba(0, 120, 212, 0.12) 80%)',
-              boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(15, 23, 42, 0.05)',
+                'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.25) 45%, rgba(0, 120, 212, 0.18) 80%)',
+              boxShadow: 'inset 0 1px 3px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(15, 23, 42, 0.08)',
             }}
           />
         </div>

@@ -26,7 +26,7 @@ export const Shapes: React.FC<ShapesProps> = ({
 
   if (prefersReducedMotion) {
     return (
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-[20%] left-[8%] text-[#0078d4]">
           <svg width="24" height="24" viewBox="0 0 24 24">
             <polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -44,7 +44,7 @@ export const Shapes: React.FC<ShapesProps> = ({
   }
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-35">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
       {/* Shape 1: Diamond with Inner Diamond (Azure Blue) */}
       <motion.div
         className="absolute top-[18%] left-[6%]"

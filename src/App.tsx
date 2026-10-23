@@ -85,84 +85,87 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-700 relative">
-      {/* Decorative Glassmorphic Motion Graphics Layer */}
+      {/* Decorative Glassmorphic Motion Graphics Layer - Sits at z-0, above base bg, behind UI */}
       <MotionBackground variant={bgVariant} />
 
-      {/* Top Header */}
-      <Header
-        profile={profile}
-        streakDays={streakDays}
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        onOpenRafiki={() => handleNavigate('rafiki')}
-      />
+      {/* Primary UI Layer at relative z-10 - Frosted glass elements blur MotionBackground */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Top Header */}
+        <Header
+          profile={profile}
+          streakDays={streakDays}
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+          onOpenRafiki={() => handleNavigate('rafiki')}
+        />
 
-      {/* Main Content Area with 300ms Page Transitions */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 pt-4 pb-20">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPage}
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="w-full"
-          >
-            {currentPage === 'home' && (
-              <HomeDashboard
-                profile={profile}
-                onNavigate={handleNavigate}
-                onOpenRafiki={() => handleNavigate('rafiki')}
-                onRetakeOnboarding={() => setIsOnboardingOpen(true)}
-              />
-            )}
+        {/* Main Content Area with 300ms Page Transitions */}
+        <main className="flex-1 max-w-4xl w-full mx-auto px-4 pt-4 pb-20">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPage}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full"
+            >
+              {currentPage === 'home' && (
+                <HomeDashboard
+                  profile={profile}
+                  onNavigate={handleNavigate}
+                  onOpenRafiki={() => handleNavigate('rafiki')}
+                  onRetakeOnboarding={() => setIsOnboardingOpen(true)}
+                />
+              )}
 
-            {currentPage === 'quiz' && (
-              <QuizPage
-                initialMode={quizParams.mode}
-                initialDomainId={quizParams.domainId}
-                onNavigate={handleNavigate}
-                onOpenRafikiWithQuestion={handleOpenRafikiWithQuestion}
-              />
-            )}
+              {currentPage === 'quiz' && (
+                <QuizPage
+                  initialMode={quizParams.mode}
+                  initialDomainId={quizParams.domainId}
+                  onNavigate={handleNavigate}
+                  onOpenRafikiWithQuestion={handleOpenRafikiWithQuestion}
+                />
+              )}
 
-            {currentPage === 'flashcards' && (
-              <FlashcardsPage
-                onNavigate={handleNavigate}
-                onOpenRafiki={() => {
-                  setCurrentPage('rafiki');
-                }}
-              />
-            )}
+              {currentPage === 'flashcards' && (
+                <FlashcardsPage
+                  onNavigate={handleNavigate}
+                  onOpenRafiki={() => {
+                    setCurrentPage('rafiki');
+                  }}
+                />
+              )}
 
-            {currentPage === 'planner' && (
-              <PlannerPage
-                profile={profile}
-                onNavigate={handleNavigate}
-                onRetakeOnboarding={() => setIsOnboardingOpen(true)}
-              />
-            )}
+              {currentPage === 'planner' && (
+                <PlannerPage
+                  profile={profile}
+                  onNavigate={handleNavigate}
+                  onRetakeOnboarding={() => setIsOnboardingOpen(true)}
+                />
+              )}
 
-            {currentPage === 'rafiki' && (
-              <RafikiPage
-                initialQuestion={rafikiQuestion}
-                onNavigate={handleNavigate}
-              />
-            )}
+              {currentPage === 'rafiki' && (
+                <RafikiPage
+                  initialQuestion={rafikiQuestion}
+                  onNavigate={handleNavigate}
+                />
+              )}
 
-            {currentPage === 'accuracy' && (
-              <AccuracyPage onNavigate={handleNavigate} />
-            )}
+              {currentPage === 'accuracy' && (
+                <AccuracyPage onNavigate={handleNavigate} />
+              )}
 
-            {currentPage === 'about' && (
-              <AboutPage onNavigate={handleNavigate} />
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </main>
+              {currentPage === 'about' && (
+                <AboutPage onNavigate={handleNavigate} />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </main>
 
-      {/* Footer with Mandatory Compliance Note */}
-      <Footer onNavigate={handleNavigate} />
+        {/* Footer with Mandatory Compliance Note */}
+        <Footer onNavigate={handleNavigate} />
+      </div>
 
       {/* Mobile-First Fixed Bottom Navigation Bar */}
       <Navbar

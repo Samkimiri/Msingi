@@ -38,7 +38,7 @@ export const MotionBackground: React.FC<MotionBackgroundProps> = ({
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none"
+      className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none"
     >
       <AnimatePresence mode="wait">
         <motion.div

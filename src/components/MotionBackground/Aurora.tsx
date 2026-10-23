@@ -26,17 +26,17 @@ export const Aurora: React.FC<AuroraProps> = ({
     return (
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
-          className="absolute -top-[10%] -left-[10%] w-[380px] h-[380px] rounded-full"
+          className="absolute top-[5%] left-[10%] w-[480px] sm:w-[600px] h-[480px] sm:h-[600px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(0, 120, 212, 0.22) 0%, rgba(0, 120, 212, 0) 70%)',
-            filter: 'blur(35px)',
+            background: 'radial-gradient(circle, rgba(0, 120, 212, 0.26) 0%, rgba(0, 120, 212, 0) 70%)',
+            filter: 'blur(45px)',
           }}
         />
         <div
-          className="absolute top-[40%] -right-[10%] w-[320px] h-[320px] rounded-full"
+          className="absolute top-[40%] right-[8%] w-[420px] sm:w-[540px] h-[420px] sm:h-[540px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.18) 0%, rgba(79, 70, 229, 0) 70%)',
-            filter: 'blur(35px)',
+            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.22) 0%, rgba(79, 70, 229, 0) 70%)',
+            filter: 'blur(45px)',
           }}
         />
       </div>
@@ -47,10 +47,10 @@ export const Aurora: React.FC<AuroraProps> = ({
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Glow 1: Azure Brand Blue (#0078d4) */}
       <motion.div
-        className="absolute -top-[12%] -left-[10%] w-[380px] h-[380px] rounded-full will-change-transform"
+        className="absolute -top-[6%] left-[2%] sm:left-[12%] w-[440px] sm:w-[580px] h-[440px] sm:h-[580px] rounded-full will-change-transform"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 120, 212, 0.24) 0%, rgba(0, 120, 212, 0) 70%)',
-          filter: isLowPower ? 'blur(24px)' : 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(0, 120, 212, 0.28) 0%, rgba(0, 120, 212, 0) 70%)',
+          filter: isLowPower ? 'blur(28px)' : 'blur(45px)',
         }}
         animate={{
           x: [0, 45, -25, 0],
@@ -66,10 +66,10 @@ export const Aurora: React.FC<AuroraProps> = ({
 
       {/* Glow 2: Dusk Indigo (#4f46e5) */}
       <motion.div
-        className="absolute top-[35%] -right-[12%] w-[350px] h-[350px] rounded-full will-change-transform"
+        className="absolute top-[28%] right-[2%] sm:right-[10%] w-[400px] sm:w-[540px] h-[400px] sm:h-[540px] rounded-full will-change-transform"
         style={{
-          background: 'radial-gradient(circle, rgba(79, 70, 229, 0.20) 0%, rgba(79, 70, 229, 0) 70%)',
-          filter: isLowPower ? 'blur(24px)' : 'blur(38px)',
+          background: 'radial-gradient(circle, rgba(79, 70, 229, 0.24) 0%, rgba(79, 70, 229, 0) 70%)',
+          filter: isLowPower ? 'blur(28px)' : 'blur(42px)',
         }}
         animate={{
           x: [0, -40, 20, 0],
@@ -87,10 +87,10 @@ export const Aurora: React.FC<AuroraProps> = ({
       {/* Extra Glow 3: Savannah Green (#059669) - shown in default and celebrate */}
       {showExtraGlows && (
         <motion.div
-          className="absolute top-[65%] -left-[15%] w-[320px] h-[320px] rounded-full will-change-transform"
+          className="absolute top-[54%] left-[4%] sm:left-[15%] w-[380px] sm:w-[500px] h-[380px] sm:h-[500px] rounded-full will-change-transform"
           style={{
-            background: 'radial-gradient(circle, rgba(5, 150, 105, 0.16) 0%, rgba(5, 150, 105, 0) 70%)',
-            filter: 'blur(36px)',
+            background: 'radial-gradient(circle, rgba(5, 150, 105, 0.20) 0%, rgba(5, 150, 105, 0) 70%)',
+            filter: 'blur(40px)',
           }}
           animate={{
             x: [0, 35, -20, 0],
@@ -107,12 +107,12 @@ export const Aurora: React.FC<AuroraProps> = ({
       )}
 
       {/* Extra Glow 4: Amber/Sunset Accent (#d97706) - celebration sparkle / warm highlight */}
-      {showExtraGlows && variant === 'celebrate' && (
+      {showExtraGlows && (
         <motion.div
-          className="absolute top-[18%] left-[40%] w-[300px] h-[300px] rounded-full will-change-transform"
+          className="absolute top-[72%] right-[5%] sm:right-[18%] w-[340px] sm:w-[460px] h-[340px] sm:h-[460px] rounded-full will-change-transform"
           style={{
             background: 'radial-gradient(circle, rgba(217, 119, 6, 0.18) 0%, rgba(217, 119, 6, 0) 70%)',
-            filter: 'blur(35px)',
+            filter: 'blur(38px)',
           }}
           animate={{
             x: [0, 25, -25, 0],
@@ -120,7 +120,7 @@ export const Aurora: React.FC<AuroraProps> = ({
             scale: [1, 1.12, 0.92, 1],
           }}
           transition={{
-            duration: 13,
+            duration: 14,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: 1,
