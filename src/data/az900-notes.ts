@@ -575,3 +575,4 @@ export const AZ900_STRUCTURED_NOTES: AZ900NoteTopic[] = [
     xp_reward: 25
   }
 ];
+
