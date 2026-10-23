@@ -17,12 +17,12 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-40 glass-header">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand / Logo */}
         <div 
           onClick={() => onNavigate('home')}
-          className="flex items-center space-x-2.5 cursor-pointer group"
+          className="flex items-center space-x-2.5 cursor-pointer group active:scale-[0.98] transition-transform"
         >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
             <span className="text-white font-extrabold text-lg tracking-tight">M</span>
@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Streak indicator */}
           <div 
             title="Active learning streak"
-            className="flex items-center space-x-1 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full text-xs font-semibold text-amber-700"
+            className="flex items-center space-x-1 bg-amber-50/90 border border-amber-200/90 px-2.5 py-1 rounded-full text-xs font-semibold text-amber-700 shadow-sm"
           >
             <Flame className="w-4 h-4 fill-amber-500 text-amber-500 animate-pulse" />
             <span>{streakDays}d</span>
@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Accuracy & Fact-Check link */}
           <button
             onClick={() => onNavigate('accuracy')}
-            className={`hidden sm:flex items-center space-x-1 text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
+            className={`hidden sm:flex items-center space-x-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all active:scale-[0.97] hover:-translate-y-px ${
               currentPage === 'accuracy'
                 ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-semibold'
                 : 'text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -62,14 +62,14 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Accuracy</span>
           </button>
 
-          {/* Quick Rafiki AI Buddy button */}
+          {/* Quick Rafiki AI Buddy button with Primary Shimmer Sweep */}
           <button
             onClick={onOpenRafiki}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
+            className="btn-shimmer flex items-center space-x-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md shadow-blue-500/20 transition-all hover:-translate-y-px active:scale-[0.97]"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">Ask</span>
-            <span>Rafiki</span>
+            <Sparkles className="w-3.5 h-3.5 relative z-10" />
+            <span className="hidden xs:inline relative z-10">Ask</span>
+            <span className="relative z-10">Rafiki</span>
           </button>
         </div>
       </div>
