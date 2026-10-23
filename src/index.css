@@ -22,6 +22,18 @@
     --glass-blur-modal: 20px;
   }
 
+  .dark {
+    --color-bg: #0b1120;
+    --color-surface: #1e293b;
+    --glass-bg: rgba(15, 23, 42, 0.72);
+    --glass-bg-subtle: rgba(15, 23, 42, 0.52);
+    --glass-bg-strong: rgba(15, 23, 42, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-focus: rgba(56, 189, 248, 0.45);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.50), 0 2px 6px -1px rgba(0, 0, 0, 0.35);
+  }
+
   @media (max-width: 768px) {
     :root {
       --glass-blur-card: 8px;
@@ -35,6 +47,12 @@
     color: #1e293b;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body,
+  .dark {
+    color: #f1f5f9;
   }
 }
 

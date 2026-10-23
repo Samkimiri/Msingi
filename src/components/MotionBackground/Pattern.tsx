@@ -15,7 +15,7 @@ export const Pattern: React.FC<PatternProps> = ({ variant, prefersReducedMotion 
 
   return (
     <div
-      className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-500 ${opacity}`}
+      className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-500 dark:invert ${opacity}`}
     >
       <div
         className={`w-[200%] h-[200%] absolute -top-1/2 -left-1/2 ${

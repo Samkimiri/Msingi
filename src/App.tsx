@@ -13,6 +13,8 @@ import { PlannerPage } from './pages/PlannerPage';
 import { RafikiPage } from './pages/RafikiPage';
 import { AccuracyPage } from './pages/AccuracyPage';
 import { AboutPage } from './pages/AboutPage';
+import { NotesPage } from './pages/NotesPage';
+import { SettingsModal } from './components/common/SettingsModal';
 import { StorageService } from './lib/storage';
 import { Question, UserProfile } from './types';
 
@@ -25,6 +27,29 @@ export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [quizParams, setQuizParams] = useState<{ mode?: any; domainId?: string }>({});
   const [rafikiQuestion, setRafikiQuestion] = useState<Question | null>(null);
+
+  // Theme settings (Light / Darker Mode)
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(() => StorageService.getTheme());
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [currentTheme]);
+
+  const handleToggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    setCurrentTheme(next);
+    StorageService.setTheme(next);
+  };
+
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+    setCurrentTheme(newTheme);
+    StorageService.setTheme(newTheme);
+  };
 
   // Reload profile and plan when onboarding completes
   const handleOnboardingComplete = () => {
@@ -84,7 +109,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-700 relative">
+    <div className="min-h-screen bg-background text-slate-800 dark:text-slate-100 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-700 relative">
       {/* Decorative Glassmorphic Motion Graphics Layer - Sits at z-0, above base bg, behind UI */}
       <MotionBackground variant={bgVariant} />
 
@@ -97,6 +122,9 @@ export const App: React.FC = () => {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           onOpenRafiki={() => handleNavigate('rafiki')}
+          currentTheme={currentTheme}
+          onToggleTheme={handleToggleTheme}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
         {/* Main Content Area with 300ms Page Transitions */}
@@ -116,6 +144,28 @@ export const App: React.FC = () => {
                   onNavigate={handleNavigate}
                   onOpenRafiki={() => handleNavigate('rafiki')}
                   onRetakeOnboarding={() => setIsOnboardingOpen(true)}
+                />
+              )}
+
+              {currentPage === 'notes' && (
+                <NotesPage
+                  onNavigate={handleNavigate}
+                  onOpenRafikiWithTopic={(topicTitle) =>
+                    handleOpenRafikiWithQuestion({
+                      id: `topic-${Date.now()}`,
+                      topic_id: 'top-cloud-def',
+                      stem: `Can you explain ${topicTitle} in detail with exam tips and an African analogy?`,
+                      options: [],
+                      correct: [],
+                      explanation: '',
+                      type: 'single',
+                      difficulty: 'easy',
+                      outline_skill: topicTitle,
+                      source_url: '',
+                      status: 'verified',
+                      verified_at: '',
+                    } as any)
+                  }
                 />
               )}
 
@@ -172,6 +222,16 @@ export const App: React.FC = () => {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         dueCardsCount={dueCardsCount}
+      />
+
+      {/* Learner Settings & Dark Mode Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        currentTheme={currentTheme}
+        onThemeChange={handleThemeChange}
+        profile={profile}
+        onProfileUpdate={setProfile}
       />
     </div>
   );

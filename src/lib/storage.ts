@@ -22,6 +22,10 @@ const STORAGE_KEYS = {
   REPORTS: 'msingi_reports',
   CHAT_MESSAGES: 'msingi_chat_messages',
   CUSTOM_FLASHCARDS: 'msingi_custom_flashcards',
+  THEME: 'msingi_theme_preference',
+  COMPLETED_NOTES: 'msingi_completed_notes',
+  NOTES_XP: 'msingi_notes_xp',
+  NOTES_BADGES: 'msingi_notes_badges',
 };
 
 // Default Guest Profile
@@ -260,6 +264,121 @@ export class StorageService {
 
   static saveChatMessages(messages: ChatMessage[]): void {
     localStorage.setItem(STORAGE_KEYS.CHAT_MESSAGES, JSON.stringify(messages));
+  }
+
+  // Theme Settings (Light / Dark)
+  static getTheme(): 'light' | 'dark' {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved === 'dark' || saved === 'light') return saved;
+      // Default to system preference if available
+      if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    } catch {
+      return 'light';
+    }
+  }
+
+  static setTheme(theme: 'light' | 'dark'): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
+      if (typeof document !== 'undefined') {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Structured Notes Gamification
+  static getCompletedNotes(): string[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.COMPLETED_NOTES);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  static getNotesXP(): number {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.NOTES_XP);
+      return data ? parseInt(data, 10) || 0 : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  static markNoteCompleted(noteId: string): { isNew: boolean; totalCompleted: number; xp: number } {
+    const completed = this.getCompletedNotes();
+    let isNew = false;
+    let currentXp = this.getNotesXP();
+
+    if (!completed.includes(noteId)) {
+      completed.push(noteId);
+      localStorage.setItem(STORAGE_KEYS.COMPLETED_NOTES, JSON.stringify(completed));
+      currentXp += 25; // 25 XP per note
+      localStorage.setItem(STORAGE_KEYS.NOTES_XP, currentXp.toString());
+      isNew = true;
+
+      // Check for unlockable badges
+      this.checkAndAwardBadges(completed.length);
+    }
+
+    return {
+      isNew,
+      totalCompleted: completed.length,
+      xp: currentXp,
+    };
+  }
+
+  static getEarnedBadges(): Array<{ id: string; name: string; icon: string; description: string; unlockedAt: string }> {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.NOTES_BADGES);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  static checkAndAwardBadges(completedCount: number): void {
+    try {
+      const badges = this.getEarnedBadges();
+      const existingIds = new Set(badges.map(b => b.id));
+
+      const MILESTONES = [
+        { id: 'badge-note-1', name: 'First Step', count: 1, icon: '🌱', description: 'Read and mastered your first AZ-900 structured topic!' },
+        { id: 'badge-note-5', name: 'Cloud Explorer', count: 5, icon: '☁️', description: 'Completed 5 official Microsoft syllabus topics!' },
+        { id: 'badge-note-10', name: 'Azure Architect Apprentice', count: 10, icon: '🏛️', description: 'Mastered 10 core architecture and service topics!' },
+        { id: 'badge-note-all', name: 'AZ-900 Scholar', count: 14, icon: '🎓', description: 'Completed all structured notes for Microsoft Azure Fundamentals!' },
+      ];
+
+      let updated = false;
+      for (const m of MILESTONES) {
+        if (completedCount >= m.count && !existingIds.has(m.id)) {
+          badges.push({
+            id: m.id,
+            name: m.name,
+            icon: m.icon,
+            description: m.description,
+            unlockedAt: new Date().toISOString(),
+          });
+          updated = true;
+        }
+      }
+
+      if (updated) {
+        localStorage.setItem(STORAGE_KEYS.NOTES_BADGES, JSON.stringify(badges));
+      }
+    } catch {
+      // ignore
+    }
   }
 }
 

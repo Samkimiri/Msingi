@@ -17,6 +17,7 @@ import {
 import { SEED_FLASHCARDS } from '../data/seed-flashcards';
 import { SEED_QUESTIONS } from '../data/seed-questions';
 import { TOPICS, DOMAINS } from '../data/az900-syllabus';
+import { AZ900_STRUCTURED_NOTES } from '../data/az900-notes';
 import { StorageService } from '../lib/storage';
 import { ChatMessage, SupportedLanguage, Question } from '../types';
 import { ReportModal } from '../components/common/ReportModal';
@@ -76,76 +77,131 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
     }
   }, [initialQuestion]);
 
-  // Offline grounded answering engine with African analogies and language localization
+  // Grounded AI answering engine with strict course boundaries, African analogies, and language localization
   const generateRafikiResponse = (userText: string, currentLang: SupportedLanguage): string => {
-    const text = userText.toLowerCase();
+    const text = userText.toLowerCase().trim();
+
+    // 1. GREETINGS CHECK (resumes greetings in selected language)
+    const greetingWords = [
+      'hi', 'hello', 'hey', 'habari', 'jambo', 'mambo', 'niaje', 'sasa',
+      'how far', 'kedu', 'good morning', 'good afternoon', 'good evening',
+      'greetings', 'yo', 'sup', 'salut'
+    ];
+    const isPureGreeting =
+      greetingWords.some(g => new RegExp(`(^|\\b)${g}(\\b|$)`, 'i').test(text)) &&
+      text.split(/\s+/).length <= 4;
+
+    if (isPureGreeting) {
+      if (currentLang === 'Kiswahili') {
+        return `Jambo rafiki! Mimi ni **Rafiki**, msaidizi wako maalum wa masomo ya Microsoft Azure Fundamentals (AZ-900). 🌍\n\nNipo hapa kukusaidia kuelewa kila dhana ya wingu kwa mifano rahisi ya Kiafrika. Je, una swali lolote kuhusu Cloud Concepts, Azure Architecture, au Management & Governance? Niulize sasa!`;
+      }
+      if (currentLang === 'Sheng') {
+        return `Niaje msee! Ni **Rafiki**, study buddy wako wa ukweli wa AZ-900. 🌍\n\nForm ni gani leo? Nirushe maswali kuhusu cloud concepts, Azure servers, au security nikupe ma-analogy za mtaani zikushike mbaya kwa exam!`;
+      }
+      if (currentLang === 'Nigerian Pidgin') {
+        return `How far my person! Na **Rafiki**, your correct AZ-900 Study Buddy. 🌍\n\nHow I fit help you pass your Azure exam today? Ask me anything about Cloud concepts, Azure architecture, or governance, make I break am down sharp sharp!`;
+      }
+      return `Habari! I am **Rafiki**, your dedicated Microsoft Azure Fundamentals (AZ-900) AI Study Buddy. 🌍\n\nI am here to help you pass the AZ-900 exam by breaking down tricky cloud concepts with relatable African analogies. What topic would you like to explore today? You can ask about Cloud Concepts, Azure Services, or Governance & Security!`;
+    }
+
+    // 2. COURSE SCOPE VALIDATION (Check if the question relates to Azure / Cloud / AZ-900)
+    const azureKeywords = [
+      'azure', 'cloud', 'iaas', 'paas', 'saas', 'capex', 'opex', 'server', 'compute',
+      'storage', 'blob', 'disk', 'file', 'queue', 'network', 'vnet', 'subnet', 'vpn',
+      'expressroute', 'nsg', 'firewall', 'security', 'identity', 'entra', 'active directory',
+      'mfa', 'conditional access', 'zero trust', 'rbac', 'role', 'policy', 'governance',
+      'lock', 'cost', 'pricing', 'tco', 'sla', 'high availability', 'scalability',
+      'elasticity', 'agility', 'disaster recovery', 'fault tolerance', 'region', 'zone',
+      'datacenter', 'virtual machine', 'vm', 'container', 'aks', 'aci', 'app service',
+      'function', 'serverless', 'monitor', 'service health', 'log analytics', 'defender',
+      'purview', 'subscription', 'resource group', 'management group', 'arm', 'bicep',
+      'compliance', 'trust center', 'backup', 'database', 'sql', 'cosmos', 'exam',
+      'az-900', 'az900', 'microsoft', 'shared responsibility', 'consumption', 'redundancy',
+      'lrs', 'zrs', 'grs', 'archive', 'cool', 'hot', 'cold', 'advisor', 'scale set',
+      'what is', 'explain', 'difference', 'how does'
+    ];
+
+    const hasAzureKeyword = azureKeywords.some(k => text.includes(k));
+    const matchesStructuredNote = AZ900_STRUCTURED_NOTES.some(
+      n => text.includes(n.title.toLowerCase()) || n.core_principles.some(p => text.includes(p.toLowerCase().slice(0, 15)))
+    );
+    const matchesSyllabus = TOPICS.some(
+      t => text.includes(t.title.toLowerCase()) || text.includes(t.slug)
+    );
+
+    // If query has no relevance to the AZ-900 course, alert student that it is out of scope
+    if (!hasAzureKeyword && !matchesStructuredNote && !matchesSyllabus) {
+      return `⚠️ **Information Outside AZ-900 Scope**\n\nHujambo! I am **Rafiki**, your dedicated Microsoft Azure Fundamentals (AZ-900) AI Study Buddy. 🌍\n\nYour question appears to fall outside the scope of our course curriculum. To ensure you make the most of your study time and pass your exam, I can only assist with topics covered on the official AZ-900 exam:\n\n- ☁️ **Domain 1: Cloud Concepts (25-30%)**\n  * CapEx vs. OpEx, Cloud models (Public/Private/Hybrid), Shared Responsibility, Cloud benefits (HA, Scalability, Elasticity).\n- 🏗️ **Domain 2: Azure Architecture and Services (35-40%)**\n  * Regions & Availability Zones, Subscriptions, Compute (VMs, Containers, Functions), Storage (Blob, Tiers), Networking (VNets, ExpressRoute), Identity (Microsoft Entra ID).\n- 🛡️ **Domain 3: Azure Management and Governance (30-35%)**\n  * Azure Policy, RBAC, Resource Locks, Cost Management, Pricing Calculator, Azure Monitor, Service Health.\n\nPlease ask any question related to Microsoft Azure Fundamentals!`;
+    }
 
     // Language prefix greetings
     let greeting = '';
     if (currentLang === 'Kiswahili') {
-      greeting = 'Jambo rafiki! Hili hapa jibu lako rahisi:\n\n';
+      greeting = 'Jambo rafiki! Hili hapa jibu lako sahihi kulingana na muhtasari wa Microsoft:\n\n';
     } else if (currentLang === 'Sheng') {
-      greeting = 'Niaje msee! Cheki hii explanation fiti kabisa:\n\n';
+      greeting = 'Niaje msee! Cheki hii explanation fiti kabisa kulingana na syllabus ya Microsoft:\n\n';
     } else if (currentLang === 'Nigerian Pidgin') {
-      greeting = 'How far my person! Make I break am down for you sharp sharp:\n\n';
+      greeting = 'How far my person! Make I break am down for you sharp sharp according to Microsoft standard:\n\n';
     }
 
-    // 1. CapEx vs OpEx
+    // 3. IN-SCOPE GROUNDED EXPLANATIONS WITH AFRICAN ANALOGIES
+
+    // CapEx vs OpEx
     if (text.includes('capex') || text.includes('opex') || text.includes('capital expenditure') || text.includes('operating expenditure') || text.includes('market stall')) {
-      if (currentLang === 'Kiswahili') {
-        return `${greeting}**CapEx (Capital Expenditure)** ni kama kununua jenereta kubwa ya petroli kwa pesa taslimu ili upate umeme dukani kwako—gharama kubwa upfront, na mashine inachakaa.\n\n**OpEx (Operating Expenditure)** ni kulipia tokeni za umeme za KPLC au Shirika la Umeme kila mwezi kulingana na units unazotumia tu.\n\nKatika Azure na Cloud, unabadilisha CapEx kuwa OpEx: hakuna kununua seva za mamilioni, unalipia tu kile unachotumia (Pay-as-you-go).`;
-      }
-      if (currentLang === 'Nigerian Pidgin') {
-        return `${greeting}**CapEx (Capital Expenditure)** na like say you go buy big generator with plenty money upfront to power your shop in Alaba Market. Na you go still buy diesel and maintain the machine when e spoil.\n\n**OpEx (Operating Expenditure)** na like say you dey buy prepaid NEPA units only for the light wey you burn that day. In Azure Cloud, you dey drop heavy upfront CapEx cost to enjoy flexible OpEx (pay-as-you-go).`;
-      }
-      if (currentLang === 'Sheng') {
-        return `${greeting}**CapEx** ni kununua generator ya luku na doh mob cash uweke kwa base yako. Doh inaisha yote pap!\n\n**OpEx** ni kununua tokeni za stima za bob 200 kwa simu kulingana na venye unawasha taa. Kwa Azure, CapEx inatupwa nje unaingia life ya OpEx: pay-as-you-go bila stress ya hardware!`;
-      }
-      return `${greeting}**CapEx vs OpEx Analogy**:\n\n- **CapEx (Capital Expenditure)**: Buying a costly petrol generator upfront with heavy cash reserves. You take on maintenance, depreciation, and hardware replacement risk.\n- **OpEx (Operating Expenditure)**: Paying monthly prepaid electricity tokens for exactly what you consume. No upfront datacenter hardware purchases.\n\n**AZ-900 Exam Takeaway**: Cloud computing shifts IT spending from CapEx to OpEx with zero upfront infrastructure cost and a consumption-based pricing model.`;
+      return `${greeting}**CapEx vs OpEx (Cloud Economics)**:\n\n- **CapEx (Capital Expenditure)**: Heavy upfront financial spending on physical datacenter equipment (servers, generators, cooling). You absorb hardware depreciation and maintenance risk.\n- **OpEx (Operating Expenditure)**: Ongoing spending on operational services consumed dynamically (pay-as-you-go). No upfront costs, immediate tax deduction in billing cycle.\n\n**African Market Analogy**: CapEx is buying a commercial diesel generator in cash to power a shop in Nairobi or Lagos. OpEx is buying daily prepaid electricity tokens (tokens za stima) from your mobile phone—you pay only for the exact kilowatt-hours consumed!\n\n**AZ-900 Exam Takeaway**: Cloud computing shifts spending from CapEx to OpEx via a consumption-based pricing model.`;
     }
 
-    // 2. Shared Responsibility Model
-    if (text.includes('shared responsibility') || text.includes('kenya') || text.includes('nigeria') || text.includes('landlord')) {
-      if (currentLang === 'Nigerian Pidgin') {
-        return `${greeting}**Shared Responsibility Model** na like when you rent shop for Computer Village, Ikeja.\n\nThe landlord dey responsible for the physical building, security gate, and roof (Datacenter, Power, Physical Servers).\n\n**YOU** dey 100% responsible for locking your shop door, keeping your money in safe, and managing who enter your store (Data, Identities, and Access control).\n\nEven if you dey IaaS, PaaS, or SaaS, your customer data and account passwords na always your own responsibility!`;
-      }
-      return `${greeting}**Shared Responsibility Model Analogy**:\n\nImagine renting an apartment in Nairobi or an office in Victoria Island:\n\n- **The Landlord (Microsoft/Azure)** is responsible for the building foundation, concrete walls, security perimeter, and power generators (Datacenter physical security and hardware).\n- **You (The Customer)** are ALWAYS responsible for locking your front door, protecting your personal files, and giving keys only to trusted family (Your Data, Identities, and User Access).\n\n**AZ-900 Exam Rule**: Regardless of cloud model (IaaS, PaaS, SaaS), the customer **ALWAYS** retains responsibility for **Information and Data**, **Devices (Mobile/PC)**, and **Accounts & Identities**.`;
+    // Shared Responsibility Model
+    if (text.includes('shared responsibility') || text.includes('responsibility model')) {
+      return `${greeting}**The Shared Responsibility Model**:\n\nSecurity and operations in Azure are a shared partnership between Microsoft and the customer:\n- **In IaaS**: Microsoft manages physical datacenter security, power, and hypervisors. You manage the guest OS, runtime, networking rules, applications, and data.\n- **In PaaS**: Microsoft manages physical servers AND operating system patching. You configure application settings and data.\n- **In SaaS**: Microsoft manages the entire software application. You manage users, data, and access.\n\n**Analogy**: Renting an apartment in Nairobi or Lagos: The landlord (Microsoft) maintains the building foundations, walls, and exterior gate. YOU are always 100% responsible for locking your door, keeping your valuables safe, and who you give keys to (Data, Identities, & Devices).\n\n**Exam Golden Rule**: Regardless of cloud model, the customer ALWAYS retains responsibility for **Data**, **Identities & Accounts**, and **Devices (Endpoints)**!`;
     }
 
-    // 3. Availability Zones & Regions
-    if (text.includes('availability zone') || text.includes('region') || text.includes('matatu') || text.includes('danfo')) {
-      return `${greeting}**Azure Regions & Availability Zones**:\n\n- **Region**: A geographical area containing one or more datacenters connected via dedicated low-latency fiber (e.g. South Africa North in Johannesburg).\n- **Availability Zones (AZs)**: Physically separate datacenters within the SAME region. Each zone has independent power, cooling, and networking.\n\n**The Danfo / Matatu Analogy**:\nIf a logistics company puts all its goods inside one single matatu or danfo, a tire blowout halts all deliveries. But if goods are split across three separate vans taking different routes across the city, your delivery operation never stops if one breaks down!\n\n**AZ-900 Tip**: Availability Zones protect your workloads against entire datacenter-level power or cooling outages.`;
+    // Availability Zones & Regions
+    if (text.includes('availability zone') || text.includes('region') || text.includes('datacenter')) {
+      return `${greeting}**Azure Regions & Availability Zones**:\n\n- **Region**: A geographical area containing one or more physical datacenters connected via dedicated low-latency fiber (e.g. South Africa North in Johannesburg).\n- **Availability Zones (AZs)**: Physically separate datacenters within the SAME region. Each zone has independent power, cooling, and networking. Minimum of 3 zones per supported region.\n- **Region Pairs**: Each region is paired with another region within the same geography (>300 miles away) for disaster recovery.\n\n**Analogy**: If a logistics business stores all inventory in one single warehouse in Mombasa, a power surge stops all deliveries. If inventory is split across 3 separate warehouses in different suburbs with independent backup generators, one failure never halts business!\n\n**AZ-900 Tip**: Availability Zones protect against **datacenter-level failures**; Region Pairs protect against **regional natural disasters**.`;
     }
 
-    // 4. Azure Policy vs RBAC
-    if (text.includes('policy') || text.includes('rbac') || text.includes('role-based')) {
-      return `${greeting}**Azure Policy vs Role-Based Access Control (RBAC)**:\n\n- **RBAC (Role-Based Access Control)** focuses on **WHO**: Can Amina create virtual machines? Can Kwame delete the database?\n- **Azure Policy** focuses on **WHAT PROPERTIES**: When any authorized user creates a resource, does it meet company rules? (e.g. "Only deploy in South Africa North", "Require a tag for Project SACCO").\n\n**Analogy**: RBAC is the club bouncer checking your ID at the gate (authorization). Azure Policy is the dress code inside: even VIP guests with full access cannot enter wearing muddy flip-flops!`;
+    // Azure Policy vs RBAC
+    if (text.includes('policy') || text.includes('rbac') || text.includes('role-based') || text.includes('locks') || text.includes('resource lock')) {
+      return `${greeting}**Azure Policy vs. RBAC vs. Resource Locks**:\n\n- **RBAC (Role-Based Access Control)** focuses on **WHO**: Can Amina create VMs? Can Kwame delete databases? (User authorization).\n- **Azure Policy** focuses on **WHAT PROPERTIES**: When any authorized user creates a resource, does it meet company rules? (e.g. "Only deploy in South Africa North", "Require CostCenter tag").\n- **Resource Locks**: Prevents accidental deletion (CanNotDelete) or modification (ReadOnly) of critical resources. Locks take precedence over RBAC!\n\n**Analogy**: RBAC is the club bouncer checking your ID at the door (authorization). Azure Policy is the dress code inside: even VIP guests with full access cannot enter wearing muddy flip-flops! A Resource Lock is placing the master keys in a locked glass case.`;
     }
 
-    // 5. IaaS vs PaaS vs SaaS
-    if (text.includes('iaas') || text.includes('paas') || text.includes('saas') || text.includes('street food')) {
-      return `${greeting}**IaaS vs PaaS vs SaaS (The Food Analogy)**:\n\n1. **IaaS (Infrastructure as a Service)**: Buying raw beef, charcoal, and salt to roast your own nyama choma / suya. You have full control over the fire and spices, but you do all the work.\n2. **PaaS (Platform as a Service)**: Going to a butchery where the chef lights the grill and handles the heat, and you just bring your marinated recipe to cook. (e.g. Azure App Service).\n3. **SaaS (Software as a Service)**: Sitting down at a restaurant where food is cooked, plated, and served directly to you. You just eat! (e.g. Microsoft 365).`;
+    // IaaS vs PaaS vs SaaS
+    if (text.includes('iaas') || text.includes('paas') || text.includes('saas')) {
+      return `${greeting}**IaaS vs PaaS vs SaaS (Cloud Service Models)**:\n\n1. **IaaS (Infrastructure as a Service)**: Maximum flexibility. Microsoft provides virtual hardware, you manage OS, middleware, and software (e.g. Azure Virtual Machines).\n2. **PaaS (Platform as a Service)**: Focus on building applications without server management. Microsoft handles OS patching, scaling, and runtime (e.g. Azure App Service, Azure SQL Database).\n3. **SaaS (Software as a Service)**: Fully managed end-user application consumed over the internet (e.g. Microsoft 365, OneDrive).\n\n**Nyama Choma / Street Food Analogy**:\n- IaaS is buying raw meat and charcoal to grill your own nyama choma at home (full control, all work).\n- PaaS is going to a butchery where the grill master provides the hot fire and grill, and you just season your meat (platform provided).\n- SaaS is sitting in a restaurant where food is cooked and plated for you (ready to consume).`;
     }
 
-    // 6. Azure Blob Storage Tiering
-    if (text.includes('blob') || text.includes('tier') || text.includes('storage') || text.includes('hot') || text.includes('cool') || text.includes('archive')) {
-      return `${greeting}**Azure Blob Storage Access Tiers**:\n\n- **Hot Tier**: High storage cost, lowest access cost. For data accessed frequently (e.g. active daily web photos).\n- **Cool Tier**: Lower storage cost, higher access fee. For data stored for at least 30 days (e.g. monthly billing invoices).\n- **Cold Tier**: Even lower storage cost, higher access fee. Stored for at least 90 days.\n- **Archive Tier**: Lowest storage cost, highest access fee. For data stored for at least 180 days with hours of retrieval latency (e.g. legal records).\n\n**Analogy**: Hot tier is the cash in your pocket ready to spend right now. Cool tier is money in your bank account. Archive tier is a plot of land inherited upcountry: virtually zero daily cost to hold, but takes hours or days to liquidate when you need it!`;
+    // Storage Tiers
+    if (text.includes('blob') || text.includes('storage') || text.includes('tier') || text.includes('hot') || text.includes('cool') || text.includes('archive')) {
+      return `${greeting}**Azure Blob Storage Access Tiers**:\n\n- **Hot Tier**: High storage cost, lowest access cost. For active, daily-accessed data.\n- **Cool Tier**: Lower storage cost, higher access fee. For data stored for at least 30 days (e.g. monthly bank statements).\n- **Cold Tier**: Even lower storage cost, higher access fee. Stored for at least 90 days.\n- **Archive Tier**: Lowest storage cost, highest access fee. Stored for at least 180 days; data is offline and takes hours to rehydrate.\n\n**Analogy**: Hot tier is cash in your mobile money wallet. Cool tier is funds in your bank savings. Archive tier is buying land upcountry: almost zero daily cost to hold, but takes time to liquidate when you need money!`;
     }
 
-    // Fallback: search syllabus for closest topic
+    // Microsoft Entra ID & Zero Trust
+    if (text.includes('entra') || text.includes('active directory') || text.includes('mfa') || text.includes('zero trust') || text.includes('conditional access')) {
+      return `${greeting}**Microsoft Entra ID & Cloud Security**:\n\n- **Microsoft Entra ID**: Cloud-based identity and access management service. Centralizes user sign-in and authentication across Azure Portal, Microsoft 365, and SaaS apps.\n- **Authentication (AuthN)**: Proves WHO you are (e.g. passwords, biometric sign-in).\n- **Authorization (AuthZ)**: Verifies WHAT permissions you have (e.g. RBAC roles).\n- **Conditional Access**: Automated security policy ("If employee logs in outside Africa, enforce MFA").\n- **Zero Trust**: "Never trust, always verify." Assume breach, verify explicitly, and grant least-privilege access.\n\n**Analogy**: Authentication is showing your National ID card to the bank teller. Authorization is checking your account ledger to see if you have enough balance to withdraw funds.`;
+    }
+
+    // Check matched note from structured notes
+    const matchedNote = AZ900_STRUCTURED_NOTES.find(
+      n => text.includes(n.title.toLowerCase()) || text.includes(n.id) || text.includes(n.outline_skill)
+    );
+    if (matchedNote) {
+      return `${greeting}**${matchedNote.title}** (${matchedNote.domain_name}):\n\n${matchedNote.official_summary}\n\n**Core Key Points**:\n${matchedNote.core_principles.slice(0, 3).map(p => `- ${p.replace(/\*\*/g, '')}`).join('\n')}\n\n**Analogy**: "${matchedNote.african_analogy}"\n\n**Exam Watch**: ${matchedNote.exam_watch[0]}`;
+    }
+
+    // Check matched topic from syllabus
     const matchedTopic = TOPICS.find(t =>
       t.title.toLowerCase().includes(text) ||
       t.slug.toLowerCase().includes(text) ||
       text.includes(t.title.toLowerCase().split(' ')[0])
     );
-
     if (matchedTopic) {
       const relatedCard = SEED_FLASHCARDS.find(c => c.topic_id === matchedTopic.id);
-      return `${greeting}**${matchedTopic.title}** (${matchedTopic.outline_skill}):\n\n${relatedCard?.back || 'Foundational Azure concept tested on the AZ-900 exam.'}\n\n${relatedCard?.african_analogy ? `**Analogy**: "${relatedCard.african_analogy}"\n\n` : ''}For the exam, make sure you understand the official Microsoft definition and how it compares to alternative services.`;
+      return `${greeting}**${matchedTopic.title}** (${matchedTopic.outline_skill}):\n\n${relatedCard?.back || matchedTopic.summary}\n\n${relatedCard?.african_analogy ? `**Analogy**: "${relatedCard.african_analogy}"\n\n` : ''}**AZ-900 Exam Tip**: Ensure you know how Microsoft defines this service and which tier or model applies.`;
     }
 
-    // General friendly fallback
-    return `${greeting}That's a great question on Microsoft Azure Fundamentals!\n\nIn AZ-900, remember the 3 core pillars:\n1. **Cloud Concepts (25-30%)**: Benefits (scalability, elasticity, agility, HA, disaster recovery), CapEx vs OpEx, and cloud service types (IaaS, PaaS, SaaS).\n2. **Architecture & Services (35-40%)**: Regions, Availability Zones, Subscriptions, Resource Groups, Compute (VMs, Containers, Functions), Storage (Blob, Disk, Files), and Networking (VNet, VPN, ExpressRoute).\n3. **Management & Governance (30-35%)**: Azure Policy, RBAC, Locks, Cost Management, Microsoft Defender for Cloud, and Azure Monitor.\n\nAsk me about any specific Azure service or scenario!`;
+    // Default grounded in-scope guide
+    return `${greeting}In Microsoft Azure Fundamentals (AZ-900), remember the 3 foundational domains:\n\n1. **Describe Cloud Concepts (25-30%)**: Cloud models (IaaS/PaaS/SaaS), Shared Responsibility, CapEx vs OpEx, and cloud benefits (High Availability, Scalability, Elasticity, Agility).\n2. **Describe Azure Architecture and Services (35-40%)**: Regions, Availability Zones, Resource Groups, Subscriptions, Compute (VMs, Functions, Containers), Storage (Blob, Files, Tiers), and Networking (VNet, VPN, ExpressRoute).\n3. **Describe Azure Management and Governance (30-35%)**: Azure Policy, RBAC, Resource Locks, Cost Management, Pricing Calculator, Azure Monitor, and Service Health.\n\nAsk me any question about these services, or choose one of the prompt chips below!`;
   };
 
   const handleSendMessage = async (contentToSend?: string) => {

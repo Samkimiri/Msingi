@@ -308,13 +308,64 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               </div>
               <div className="mt-1 flex items-baseline space-x-1">
-                <span className="text-lg font-bold text-slate-900">24/7</span>
+                <span className="text-lg font-bold text-slate-900 dark:text-white">24/7</span>
                 <span className="text-[10px] text-slate-500">tutor ready</span>
+              </div>
+            </div>
+
+            <div
+              onClick={() => onNavigate('notes')}
+              className="glass hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm active:scale-[0.97] hover:-translate-y-px"
+            >
+              <div className="flex items-center justify-between text-slate-500">
+                <span className="text-[11px] font-semibold">AZ-900 Notes</span>
+                <BookOpen className="w-3.5 h-3.5 text-blue-600" />
+              </div>
+              <div className="mt-1 flex items-baseline space-x-1">
+                <span className="text-lg font-bold text-slate-900 dark:text-white">
+                  {StorageService.getCompletedNotes().length}/14
+                </span>
+                <span className="text-[10px] text-slate-500">mastered</span>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Featured Banner: Structured Notes Aligned to Microsoft Learn */}
+      <motion.div
+        variants={cardEntranceVariants}
+        onClick={() => onNavigate('notes')}
+        className="glass hover:border-blue-500 rounded-3xl p-5 shadow-sm cursor-pointer transition-all active:scale-[0.99] border border-blue-200/90 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-transparent dark:from-blue-950/40 dark:via-indigo-950/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
+        <div className="flex items-start space-x-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-blue-600/10 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-600 text-white shadow-xs">
+                Microsoft Syllabus Notes
+              </span>
+              <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <Zap className="w-3 h-3 fill-amber-500" />
+                <span>+25 XP Per Topic</span>
+              </span>
+            </div>
+            <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
+              Master AZ-900 Structured Topics
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 max-w-lg">
+              Read comprehensive, official Microsoft-grounded notes for all 14 syllabus topics with African analogies, exam watch tips, and instant checkpoints!
+            </p>
+          </div>
+        </div>
+
+        <button className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center space-x-1.5 flex-shrink-0">
+          <span>Read Notes</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </motion.div>
 
       {/* Domain Breakdown Bars */}
       <motion.div

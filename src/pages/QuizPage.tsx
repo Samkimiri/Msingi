@@ -102,8 +102,13 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       pool = [...SEED_QUESTIONS, ...SEED_QUESTIONS].slice(0, 40);
     }
 
-    // Shuffle pool
-    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    // Shuffle questions pool and randomize option positions so correct answers appear in varied positions (A, B, C, D)
+    const shuffled = [...pool]
+      .sort(() => 0.5 - Math.random())
+      .map(q => ({
+        ...q,
+        options: [...q.options].sort(() => Math.random() - 0.5),
+      }));
     setQuestions(shuffled);
     setCurrentIndex(0);
     setSelectedOptions([]);

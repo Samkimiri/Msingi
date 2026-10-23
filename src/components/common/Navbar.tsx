@@ -35,14 +35,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               whileTap={{ scale: 0.94 }}
               className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-colors relative ${
                 isActive
-                  ? 'text-blue-700 font-bold'
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'text-blue-700 dark:text-blue-400 font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <div className="relative">
                 <Icon
                   className={`w-5 h-5 transition-transform duration-200 ${
-                    isActive ? 'scale-110 text-blue-700' : 'text-slate-500'
+                    isActive ? 'scale-110 text-blue-700 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
                   }`}
                 />
                 {item.badge !== undefined && (
