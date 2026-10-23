@@ -173,3 +173,4 @@ Msingi/
 ## 📜 License & Compliance
 
 Crafted with ❤️ for African learners in the **#1MillionDevs Vibe Coding Hackathon**. Released under the MIT License.
+

@@ -59,3 +59,4 @@
 > *"Every single item in Msingi is mapped to the official July 20, 2026 Microsoft Learn outline with zero hallucinations and strict compliance notices.*
 >
 > *Msingi is more than an app—it is the foundation for one million African cloud careers. Asante sana!"*
+

@@ -190,3 +190,4 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
     </div>
   );
 };
+
