@@ -40,7 +40,8 @@ const AZURE_CLOUD_KEYWORDS = [
   'az-900', 'az900', 'microsoft', 'shared responsibility', 'consumption', 'redundancy',
   'lrs', 'zrs', 'grs', 'archive', 'cool', 'hot', 'cold', 'advisor', 'scale set',
   'defender for cloud', 'resource lock', 'virtual desktop', 'load balancer', 'public cloud',
-  'private cloud', 'hybrid cloud', 'multi-cloud', 'tag', 'budget', 'billing'
+  'private cloud', 'hybrid cloud', 'multi-cloud', 'tag', 'budget', 'billing',
+  'key vault', 'bastion', 'ddos', 'arc', 'synapse', 'databricks', 'governance'
 ];
 
 export class RafikiEngine {
@@ -134,17 +135,34 @@ export class RafikiEngine {
       correct: string[];
       explanation: string;
       outline_skill?: string;
+      wrong_option_notes?: Record<string, string>;
     }
   ): string {
     const text = rawText.toLowerCase().trim();
 
     // 1. If question context is passed (e.g. from quiz or notes)
     if (questionContext) {
-      return `**Exam Question Breakdown (${questionContext.outline_skill || 'AZ-900 Core'})**:\n\n` +
-        `**Question**: "${questionContext.stem}"\n\n` +
-        `**Correct Answer**: **${questionContext.correct.join(', ')}**\n\n` +
-        `**Official Microsoft Explanation**:\n${questionContext.explanation}\n\n` +
-        `**Why This Matters for the Exam**: Microsoft designs questions around realistic scenario constraints (such as minimizing capital expenditure, preventing accidental deletion, or ensuring regional disaster recovery). Make sure you look for key trigger words in the question stem!`;
+      let breakdown = `**Exam Question Breakdown (${questionContext.outline_skill || 'AZ-900 Core'})**:\n\n` +
+        `**Question**: "${questionContext.stem}"\n\n`;
+
+      if (questionContext.correct && questionContext.correct.length > 0) {
+        breakdown += `**Correct Answer**: **${questionContext.correct.join(', ')}**\n\n`;
+      }
+
+      if (questionContext.explanation) {
+        breakdown += `**Official Microsoft Explanation**:\n${questionContext.explanation}\n\n`;
+      }
+
+      if (questionContext.wrong_option_notes && Object.keys(questionContext.wrong_option_notes).length > 0) {
+        breakdown += `**Why Other Choices Are Incorrect**:\n` +
+          Object.entries(questionContext.wrong_option_notes)
+            .map(([opt, note]) => `- **${opt}**: ${note}`)
+            .join('\n') + '\n\n';
+      }
+
+      breakdown += `**Why This Matters for the Exam**: Microsoft designs questions around realistic scenario constraints (such as minimizing capital expenditure, preventing accidental deletion, or ensuring regional disaster recovery). Make sure you look for key trigger words in the question stem!`;
+
+      return breakdown;
     }
 
     // 2. Pure Greeting Check
@@ -278,6 +296,52 @@ export class RafikiEngine {
         `- **Azure Monitor**: Collects and analyzes telemetry and performance metrics from YOUR applications and virtual infrastructure (CPU usage, logs, Application Insights).\n` +
         `- **Azure Service Health**: Personalized dashboard notifying you about MICROSOFT'S global cloud infrastructure health (regional outages, planned maintenance, and service advisories affecting your subscriptions).\n\n` +
         `**Analogy**: Azure Monitor is the dashboard gauges on your vehicle showing engine RPM and fuel level. Azure Service Health is a live traffic radio station announcing that the main expressway bridge is temporarily flooded ahead.`;
+    }
+
+    // Compute Services: VMs vs App Service vs Functions vs Containers/AKS
+    if (text.includes('compute') || text.includes('virtual machine') || text.includes('vm') || text.includes('app service') || text.includes('function') || text.includes('serverless') || text.includes('container') || text.includes('aks') || text.includes('aci')) {
+      return `${greetingPrefix}**Azure Compute Services Overview**:\n\n` +
+        `- **Azure Virtual Machines (VMs)**: IaaS offering providing total OS-level control (Windows/Linux) where you manage software and OS updates.\n` +
+        `- **Virtual Machine Scale Sets (VMSS)**: Automatically deploys and balances identical load-balanced VMs for true elasticity.\n` +
+        `- **Azure App Service**: PaaS offering for hosting web applications and REST APIs without managing virtual servers.\n` +
+        `- **Azure Functions**: Serverless event-driven compute where code runs purely in response to triggers (e.g. an HTTP hit or database upload) with zero infrastructure management and per-second billing.\n` +
+        `- **Azure Container Instances (ACI) & Azure Kubernetes Service (AKS)**: Fast, isolated container execution (ACI) and enterprise container orchestration (AKS).\n\n` +
+        `**Transport Analogy**: A VM is leasing an empty bus (you hire the driver, buy fuel, and maintain the engine). App Service is booking seats on a scheduled shuttle (just get on and ride). Azure Functions is ordering an Uber ride for a single trip—pay only for the exact minutes used!`;
+    }
+
+    // Databases & Analytics: Azure SQL vs Cosmos DB vs Synapse
+    if (text.includes('database') || text.includes('sql') || text.includes('cosmos') || text.includes('relational') || text.includes('nosql') || text.includes('synapse')) {
+      return `${greetingPrefix}**Azure Database & Analytics Offerings**:\n\n` +
+        `- **Azure SQL Database**: Fully managed relational PaaS database engine with built-in high availability, automatic tuning, and enterprise backup.\n` +
+        `- **Azure Cosmos DB**: Globally distributed, multi-model NoSQL database offering single-digit millisecond response times and 99.999% SLA.\n` +
+        `- **Azure Database for MySQL / PostgreSQL**: Managed open-source relational databases in Azure.\n` +
+        `- **Azure Synapse Analytics**: Unified enterprise analytics combining big data warehousing and data integration pipelines.\n\n` +
+        `**Analogy**: Azure SQL is a strict, structured accounting ledger book. Azure Cosmos DB is a global WhatsApp group where messages are synced instantly across Nairobi, Lagos, London, and Johannesburg in real-time.`;
+    }
+
+    // Security & Identity Defense: Defender for Cloud vs Key Vault vs Bastion
+    if (text.includes('key vault') || text.includes('defender') || text.includes('bastion') || text.includes('ddos') || text.includes('firewall') || text.includes('security')) {
+      return `${greetingPrefix}**Azure Security & Protection Architecture**:\n\n` +
+        `- **Microsoft Defender for Cloud**: Cloud Security Posture Management (CSPM) and Cloud Workload Protection (CWPP) providing continuous security scores and threat alerts.\n` +
+        `- **Azure Key Vault**: Centralized secure secret management for storing passwords, encryption keys, and TLS/SSL certificates.\n` +
+        `- **Azure Bastion**: Secure, seamless RDP/SSH access to VMs directly through the Azure Portal over TLS (port 443), eliminating public IP exposure.\n` +
+        `- **Azure DDoS Protection**: Protects VNets against Distributed Denial of Service volumetric attacks.\n\n` +
+        `**Analogy**: Key Vault is a bank safety deposit box for your master house keys. Azure Bastion is a private tunnel directly into your house from inside a security compound so you never have to walk through dark public alleys.`;
+    }
+
+    // Governance & Resource Hierarchy: Management Groups -> Subscriptions -> Resource Groups
+    if (text.includes('hierarchy') || text.includes('management group') || text.includes('subscription') || text.includes('resource group') || text.includes('arm template') || text.includes('bicep')) {
+      return `${greetingPrefix}**Azure Governance & Resource Hierarchy**:\n\n` +
+        `Azure resources are organized into a strict 4-level management hierarchy:\n` +
+        `1. **Management Groups**: Containers for managing access, policy, and compliance across multiple subscriptions.\n` +
+        `2. **Subscriptions**: Units of management, billing, and trust linked to an Entra ID tenant.\n` +
+        `3. **Resource Groups**: Logical containers for deploying and managing related Azure resources that share the same lifecycle.\n` +
+        `4. **Resources**: Individual instances of Azure services (VMs, storage accounts, VNets).\n\n` +
+        `**National Administration Analogy**:\n` +
+        `- Management Group = National Government (sets national laws & policies).\n` +
+        `- Subscription = County or State Government (manages specific budget and departments).\n` +
+        `- Resource Group = A specific development project (e.g., Building a new market).\n` +
+        `- Resource = Individual bricks, solar panels, and water pipes inside that market.`;
     }
 
     // Match structured notes

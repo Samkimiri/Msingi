@@ -68,15 +68,18 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  // Handle incoming initial question prompt
+  const initialHandledRef = useRef(false);
+
+  // Handle incoming initial question prompt immediately
   useEffect(() => {
-    if (initialQuestion) {
+    if (initialQuestion && !initialHandledRef.current) {
+      initialHandledRef.current = true;
       const qPrompt = `Please explain this AZ-900 exam question and why the right answer is correct:\n\n"${initialQuestion.stem}"\n\nOptions:\n${initialQuestion.options.map((o, i) => `${i + 1}. ${o}`).join('\n')}`;
       handleSendMessage(qPrompt);
     }
   }, [initialQuestion]);
 
-  const handleSendMessage = async (contentToSend?: string) => {
+  const handleSendMessage = (contentToSend?: string) => {
     const text = (contentToSend || input).trim();
     if (!text) return;
 
@@ -93,63 +96,23 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
     if (!contentToSend) setInput('');
     setIsTyping(true);
 
-    try {
-      // Attempt backend Vercel serverless AI call
-      const res = await fetch('/api/rafiki', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          language,
-          history: newMessages.slice(-6),
-          questionContext: initialQuestion
-            ? {
-                stem: initialQuestion.stem,
-                options: initialQuestion.options,
-                correct: initialQuestion.correct,
-                explanation: initialQuestion.explanation,
-                outline_skill: initialQuestion.outline_skill,
-              }
-            : undefined,
-        }),
-      });
+    // Give immediate, grounded responses first (120-200ms natural conversational feel)
+    // Avoids long loading spinners, network timeouts, or cold-boot serverless delays
+    const typingDelay = initialQuestion ? 120 : 200;
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.reply) {
-          const rafikiMsg: ChatMessage = {
-            id: `rafiki-${Date.now()}`,
-            sender: 'rafiki',
-            content: data.reply,
-            timestamp: new Date().toISOString(),
-          };
-
-          const finalMessages = [...newMessages, rafikiMsg];
-          setMessages(finalMessages);
-          StorageService.saveChatMessages(finalMessages);
-          setIsTyping(false);
-          return;
-        }
-      }
-    } catch {
-      // Network unreachable or offline - fall through to offline grounded engine
-    }
-
-    // Offline grounded engine fallback using RafikiEngine
     setTimeout(() => {
-      const responseText = RafikiEngine.generateResponse(
-        text,
-        language,
-        initialQuestion
-          ? {
-              stem: initialQuestion.stem,
-              options: initialQuestion.options,
-              correct: initialQuestion.correct,
-              explanation: initialQuestion.explanation,
-              outline_skill: initialQuestion.outline_skill,
-            }
-          : undefined
-      );
+      const contextData = initialQuestion
+        ? {
+            stem: initialQuestion.stem,
+            options: initialQuestion.options,
+            correct: initialQuestion.correct,
+            explanation: initialQuestion.explanation,
+            outline_skill: initialQuestion.outline_skill,
+            wrong_option_notes: initialQuestion.wrong_option_notes,
+          }
+        : undefined;
+
+      const responseText = RafikiEngine.generateResponse(text, language, contextData);
 
       const rafikiMsg: ChatMessage = {
         id: `rafiki-${Date.now()}`,
@@ -162,7 +125,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
       setMessages(finalMessages);
       StorageService.saveChatMessages(finalMessages);
       setIsTyping(false);
-    }, 400);
+    }, typingDelay);
   };
 
   // Web Speech API text-to-speech for accessibility
