@@ -4,6 +4,7 @@ import { SEED_QUESTIONS } from '../../data/seed-questions';
 import { SupportedLanguage, UserProfile } from '../../types';
 import { StorageService } from '../../lib/storage';
 import { generateStudyPlan } from '../../lib/planner-engine';
+import { MotionBackground } from '../MotionBackground';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
@@ -92,16 +93,17 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative">
+      <MotionBackground variant="default" />
+      <div className="w-full max-w-md glass-strong border border-slate-200/90 rounded-3xl p-6 shadow-xl relative overflow-hidden">
         {/* Subtle decorative background glow */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Step indicator */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
           <div className="flex items-center space-x-2">
-            <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200">
+            <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200 shadow-sm">
               {step}/3
             </span>
             <span className="text-xs font-semibold text-slate-700">
@@ -113,7 +115,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
           <button
             onClick={handleFinishOnboarding}
-            className="text-[11px] font-medium text-slate-500 hover:text-slate-800"
+            className="text-[11px] font-medium text-slate-500 hover:text-slate-800 active:scale-95 transition-transform"
           >
             Skip for now →
           </button>
@@ -168,10 +170,10 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
             <button
               onClick={() => setStep(2)}
-              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-transform active:scale-95"
+              className="btn-shimmer w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-[0.97] hover:-translate-y-px"
             >
-              <span>Continue to Step 2</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="relative z-10">Continue to Step 2</span>
+              <ArrowRight className="w-4 h-4 relative z-10" />
             </button>
           </div>
         )}
@@ -240,16 +242,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
             <div className="flex space-x-2 pt-2">
               <button
                 onClick={() => setStep(1)}
-                className="px-4 py-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                className="px-4 py-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all active:scale-[0.97]"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-transform active:scale-95"
+                className="btn-shimmer flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-[0.97] hover:-translate-y-px"
               >
-                <span>Take 10-Q Diagnostic</span>
-                <ArrowRight className="w-4 h-4" />
+                <span className="relative z-10">Take 10-Q Diagnostic</span>
+                <ArrowRight className="w-4 h-4 relative z-10" />
               </button>
             </div>
           </div>

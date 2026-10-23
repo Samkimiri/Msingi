@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   Flame,
   Trophy,
@@ -20,6 +21,8 @@ import { SEED_QUESTIONS } from '../data/seed-questions';
 import { calculateReadiness } from '../lib/readiness';
 import { StorageService } from '../lib/storage';
 import { UserProfile } from '../types';
+import { useCountUp } from '../hooks/useCountUp';
+import { cardEntranceVariants, staggerContainerVariants } from '../lib/motion';
 
 interface HomeDashboardProps {
   profile: UserProfile;
@@ -89,6 +92,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   };
 
   const scoreStyle = getScoreColor(readiness.overall_score);
+  const animatedScore = useCountUp(readiness.overall_score, 800);
 
   // SVG Gauge calculations
   const radius = 64;
@@ -96,9 +100,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   const strokeDashoffset = circumference - (readiness.overall_score / 100) * circumference;
 
   return (
-    <div className="space-y-6 pb-6">
+    <motion.div
+      variants={staggerContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 pb-6"
+    >
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-br from-blue-50/80 via-white to-sky-50/60 border border-blue-200 rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+      <motion.div
+        variants={cardEntranceVariants}
+        className="glass border border-blue-200/90 rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden"
+      >
         <div className="absolute -top-12 -right-12 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -106,7 +118,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               <span className="text-xs uppercase font-extrabold tracking-wider text-blue-700">
                 Habari, {profile.display_name}!
               </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white border border-slate-200 text-slate-700 shadow-sm">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/90 border border-slate-200 text-slate-700 shadow-sm">
                 {profile.preferred_language}
               </span>
             </div>
@@ -127,26 +139,29 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           <div className="flex items-center space-x-3 self-start sm:self-center">
             <button
               onClick={() => onNavigate('quiz', { mode: 'mock' })}
-              className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-all flex items-center space-x-1.5"
+              className="bg-white/90 hover:bg-white text-slate-700 border border-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
             >
               <Trophy className="w-3.5 h-3.5 text-amber-500" />
               <span>Full Mock (40Q)</span>
             </button>
             <button
               onClick={() => onNavigate('quiz', { mode: 'domain' })}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center space-x-1.5 active:scale-95"
+              className="btn-shimmer bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px"
             >
-              <Zap className="w-3.5 h-3.5" />
-              <span>Start Quiz</span>
+              <Zap className="w-3.5 h-3.5 relative z-10" />
+              <span className="relative z-10">Start Quiz</span>
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Stats Grid: Readiness Score Gauge + Next Best Action */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         {/* Radial Readiness Gauge Card */}
-        <div className="md:col-span-5 bg-white border border-slate-200 rounded-3xl p-5 flex flex-col items-center justify-center text-center relative shadow-sm">
+        <motion.div
+          variants={cardEntranceVariants}
+          className="md:col-span-5 glass border border-slate-200/90 rounded-3xl p-5 flex flex-col items-center justify-center text-center relative shadow-sm"
+        >
           <div className="w-full flex items-center justify-between mb-2">
             <div className="flex items-center space-x-1.5">
               <Target className="w-4 h-4 text-blue-600" />
@@ -182,12 +197,14 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 fill="transparent"
-                className="transition-all duration-1000 ease-out"
+                style={{
+                  transition: 'stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
               <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                {readiness.overall_score}%
+                {animatedScore}%
               </span>
               <span className="text-[10px] text-slate-500 font-medium">Recency-weighted</span>
             </div>
@@ -201,12 +218,15 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           <p className="text-[10px] text-slate-400 mt-3 border-t border-slate-100 pt-2 w-full">
             * The readiness score is an estimate, not a guarantee of exam success.
           </p>
-        </div>
+        </motion.div>
 
         {/* Next Best Action Card & Daily Goal */}
-        <div className="md:col-span-7 flex flex-col justify-between space-y-4">
+        <motion.div
+          variants={cardEntranceVariants}
+          className="md:col-span-7 flex flex-col justify-between space-y-4"
+        >
           {/* Smart Next-Best-Action Box */}
-          <div className="bg-gradient-to-br from-white to-blue-50/50 border border-blue-200 rounded-3xl p-5 shadow-sm relative overflow-hidden flex-1 flex flex-col justify-between">
+          <div className="glass border border-blue-200/90 rounded-3xl p-5 shadow-sm relative overflow-hidden flex-1 flex flex-col justify-between">
             <div className="flex items-center space-x-2 mb-2">
               <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
@@ -239,7 +259,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     onNavigate('quiz', { mode: 'weak' });
                   }
                 }}
-                className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-100 hover:bg-blue-200/70 px-3 py-1.5 rounded-lg border border-blue-200 transition-all"
+                className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-100/80 hover:bg-blue-200/70 px-3 py-1.5 rounded-lg border border-blue-200 transition-all active:scale-[0.97] hover:-translate-y-px"
               >
                 <span>{readiness.next_best_action.action_label}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -251,7 +271,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           <div className="grid grid-cols-3 gap-3">
             <div
               onClick={() => onNavigate('flashcards')}
-              className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm"
+              className="glass hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm active:scale-[0.97] hover:-translate-y-px"
             >
               <div className="flex items-center justify-between text-slate-500">
                 <span className="text-[11px] font-semibold">Flashcards</span>
@@ -265,7 +285,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
             <div
               onClick={() => onNavigate('planner')}
-              className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm"
+              className="glass hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm active:scale-[0.97] hover:-translate-y-px"
             >
               <div className="flex items-center justify-between text-slate-500">
                 <span className="text-[11px] font-semibold">Today's Plan</span>
@@ -281,7 +301,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
             <div
               onClick={onOpenRafiki}
-              className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm"
+              className="glass hover:border-blue-400 rounded-2xl p-3 cursor-pointer transition-all shadow-sm active:scale-[0.97] hover:-translate-y-px"
             >
               <div className="flex items-center justify-between text-slate-500">
                 <span className="text-[11px] font-semibold">Rafiki AI</span>
@@ -293,11 +313,14 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Domain Breakdown Bars */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+      <motion.div
+        variants={cardEntranceVariants}
+        className="glass border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-4"
+      >
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900">AZ-900 Domain Mastery</h3>
@@ -307,7 +330,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </div>
           <button
             onClick={() => onNavigate('accuracy')}
-            className="text-[11px] text-slate-600 hover:text-blue-700 flex items-center space-x-1"
+            className="text-[11px] text-slate-600 hover:text-blue-700 flex items-center space-x-1 active:scale-[0.97]"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Syllabus Mapping</span>
@@ -352,8 +375,11 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 {/* Progress track */}
                 <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
                   <div
-                    className={`h-full ${domainColor} transition-all duration-500 rounded-full`}
-                    style={{ width: `${Math.max(5, domain.recent_accuracy_pct)}%` }}
+                    className={`h-full ${domainColor} rounded-full`}
+                    style={{
+                      width: `${Math.max(5, domain.recent_accuracy_pct)}%`,
+                      transition: 'width 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
                   />
                 </div>
                 {!hasData && (
@@ -365,10 +391,13 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* Topic Accuracy Heatmap Grid */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
+      <motion.div
+        variants={cardEntranceVariants}
+        className="glass border border-slate-200/90 rounded-3xl p-5 shadow-sm space-y-3"
+      >
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Syllabus Topic Heatmap</h3>
@@ -398,17 +427,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-2">
           {readiness.topic_readiness.map(topic => {
-            let badgeBg = 'bg-slate-50 border-slate-200 text-slate-600';
+            let badgeBg = 'bg-slate-50/80 border-slate-200 text-slate-600';
             let dotBg = 'bg-slate-400';
             if (topic.total_attempts > 0) {
               if (topic.accuracy_pct >= 80) {
-                badgeBg = 'bg-emerald-50 border-emerald-200 text-emerald-800';
+                badgeBg = 'bg-emerald-50/80 border-emerald-200 text-emerald-800';
                 dotBg = 'bg-emerald-500';
               } else if (topic.accuracy_pct >= 60) {
-                badgeBg = 'bg-amber-50 border-amber-200 text-amber-800';
+                badgeBg = 'bg-amber-50/80 border-amber-200 text-amber-800';
                 dotBg = 'bg-amber-500';
               } else {
-                badgeBg = 'bg-rose-50 border-rose-200 text-rose-800';
+                badgeBg = 'bg-rose-50/80 border-rose-200 text-rose-800';
                 dotBg = 'bg-rose-500';
               }
             }
@@ -417,7 +446,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               <div
                 key={topic.topic_id}
                 onClick={() => onNavigate('quiz', { mode: 'topic', domainId: topic.domain_id })}
-                className={`p-2.5 rounded-xl border flex items-center justify-between cursor-pointer hover:border-blue-400 transition-all ${badgeBg}`}
+                className={`p-2.5 rounded-xl border flex items-center justify-between cursor-pointer hover:border-blue-400 transition-all active:scale-[0.98] ${badgeBg}`}
               >
                 <div className="flex items-center space-x-2 min-w-0 pr-2">
                   <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotBg}`} />
@@ -432,21 +461,24 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* Retake Diagnostic / Re-calibrate */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 shadow-sm">
+      <motion.div
+        variants={cardEntranceVariants}
+        className="flex items-center justify-between p-4 rounded-2xl glass border border-slate-200/90 text-xs text-slate-600 shadow-sm"
+      >
         <div className="flex items-center space-x-2">
           <RotateCcw className="w-4 h-4 text-slate-500" />
           <span>Want to reset your goals or retake the diagnostic quiz?</span>
         </div>
         <button
           onClick={onRetakeOnboarding}
-          className="text-blue-700 hover:text-blue-800 font-semibold underline"
+          className="text-blue-700 hover:text-blue-800 font-semibold underline active:scale-95"
         >
           Reconfigure Target
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
