@@ -15,7 +15,6 @@ import {
   Filter,
   Trophy,
   Check,
-  ChevronRight,
   ExternalLink,
 } from 'lucide-react';
 import { DOMAINS, TOPICS } from '../data/az900-syllabus';
@@ -143,7 +142,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
   const currentQuestion = questions[currentIndex];
 
   const handleSelectOption = (option: string) => {
-    if (isAnswerSubmitted && selectedMode !== 'mock') return;
+    if (isAnswerSubmitted) return;
 
     if (currentQuestion.type === 'multiple') {
       // Multi-select toggle
@@ -192,6 +191,14 @@ export const QuizPage: React.FC<QuizPageProps> = ({
       created_at: new Date().toISOString(),
     };
     StorageService.saveAttempt(attempt);
+
+    // Record mock answer if in mock mode
+    if (selectedMode === 'mock') {
+      setMockAnswers(prev => ({
+        ...prev,
+        [currentQuestion.id]: selectedOptions,
+      }));
+    }
   };
 
   const handleNextQuestion = () => {
@@ -229,7 +236,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
     };
 
     questions.forEach(q => {
-      const answers = mockAnswers[q.id] || selectedOptions;
+      const answers = (q.id === currentQuestion?.id ? selectedOptions : mockAnswers[q.id]) || mockAnswers[q.id] || [];
       const isCorrect =
         q.correct.length === answers.length &&
         q.correct.every(c => answers.includes(c));
@@ -262,6 +269,14 @@ export const QuizPage: React.FC<QuizPageProps> = ({
     StorageService.saveMockExam(examRecord);
     setMockExamResult(examRecord);
     setIsMockCompleted(true);
+
+    if (scorePct >= 70) {
+      confetti({
+        particleCount: 80,
+        spread: 100,
+        origin: { y: 0.6 },
+      });
+    }
   };
 
   const handleAddToFlashcards = () => {
@@ -494,10 +509,10 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                   const isSelected = selectedOptions.includes(option);
                   const isCorrect = currentQuestion.correct.includes(option);
 
-                  // Styling logic based on submission state (only revealed in practice modes)
+                  // Styling logic based on submission state
                   let itemStyle = 'border-slate-200/90 bg-white/80 text-slate-800 hover:border-slate-300 hover:bg-white';
 
-                  if (selectedMode !== 'mock' && isAnswerSubmitted) {
+                  if (isAnswerSubmitted) {
                     if (isCorrect) {
                       itemStyle = 'border-emerald-500 bg-emerald-50/90 text-emerald-950 font-semibold';
                     } else if (isSelected && !isCorrect) {
@@ -510,7 +525,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                   }
 
                   const feedbackAnimation =
-                    selectedMode !== 'mock' && isAnswerSubmitted
+                    isAnswerSubmitted
                       ? isCorrect
                         ? 'correctPop'
                         : isSelected && !isCorrect
@@ -533,10 +548,10 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                         {String.fromCharCode(65 + idx)}
                       </span>
                       <span className="flex-1 leading-snug">{option}</span>
-                      {selectedMode !== 'mock' && isAnswerSubmitted && isCorrect && (
+                      {isAnswerSubmitted && isCorrect && (
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 animate-scale-pop" />
                       )}
-                      {selectedMode !== 'mock' && isAnswerSubmitted && isSelected && !isCorrect && (
+                      {isAnswerSubmitted && isSelected && !isCorrect && (
                         <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                       )}
                     </motion.button>
@@ -547,7 +562,7 @@ export const QuizPage: React.FC<QuizPageProps> = ({
           </AnimatePresence>
 
           {/* Action Button: Check Answer or Next Question */}
-          {selectedMode !== 'mock' && !isAnswerSubmitted ? (
+          {!isAnswerSubmitted ? (
             <button
               onClick={handleCheckAnswer}
               disabled={selectedOptions.length === 0}
@@ -558,8 +573,8 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             </button>
           ) : null}
 
-          {/* INSTANT EXPLANATION PANEL (Practice Modes) */}
-          {selectedMode !== 'mock' && isAnswerSubmitted && (
+          {/* INSTANT EXPLANATION PANEL (Practice and Mock Modes) */}
+          {isAnswerSubmitted && (
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -646,32 +661,26 @@ export const QuizPage: React.FC<QuizPageProps> = ({
                 </a>
               </div>
 
-              {/* Next Question button */}
+              {/* Next Question button or View Overall Performance on final question */}
               <button
                 onClick={handleNextQuestion}
                 className="btn-shimmer w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-[0.97] hover:-translate-y-px mt-3"
               >
-                <span className="relative z-10">{currentIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}</span>
+                <span className="relative z-10">
+                  {currentIndex < questions.length - 1
+                    ? 'Next Question'
+                    : selectedMode === 'mock'
+                    ? 'View Overall Performance'
+                    : 'Complete Quiz'}
+                </span>
                 <ArrowRight className="w-4 h-4 relative z-10" />
               </button>
             </motion.div>
           )}
-
-          {/* MOCK EXAM MODE: Direct Next Question Button */}
-          {selectedMode === 'mock' && (
-            <button
-              onClick={handleNextQuestion}
-              disabled={selectedOptions.length === 0}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 disabled:opacity-40 transition-all active:scale-[0.97] hover:-translate-y-px"
-            >
-              <span>{currentIndex < questions.length - 1 ? 'Record & Next Question' : 'Submit Mock Exam'}</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
         </div>
       )}
 
-      {/* MOCK EXAM RESULTS VIEW */}
+      {/* MOCK EXAM RESULTS VIEW (OVERALL PERFORMANCE) */}
       {isMockCompleted && mockExamResult && (
         <motion.div
           initial={{ opacity: 0, scale: 0.97, y: 16 }}
@@ -683,21 +692,50 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             <Trophy className="w-8 h-8 text-white" />
           </div>
 
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
-              Mock Exam Result
-            </span>
-            <h2 className="text-3xl font-extrabold text-slate-900 mt-1">
+          <div className="space-y-2">
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800">
+              <span>Overall Mock Exam Performance</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">
               {mockExamResult.score_pct}% Score
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Time taken: {formatTimer(mockExamResult.duration_seconds)} • Required to pass: 70%
+
+            {mockExamResult.score_pct >= 70 ? (
+              <div className="inline-flex items-center space-x-1 px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold">
+                <Check className="w-3.5 h-3.5" />
+                <span>PASSED • AZ-900 Exam Ready (Required: 70%)</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center space-x-1 px-3 py-1 bg-amber-100 text-amber-800 border border-amber-300 rounded-full text-xs font-bold">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>STUDY RECOMMENDED • {70 - mockExamResult.score_pct}% below 70% passing threshold</span>
+              </div>
+            )}
+
+            <p className="text-xs text-slate-600 max-w-md mx-auto pt-1">
+              {mockExamResult.score_pct >= 70
+                ? "Hongera! You achieved Microsoft's official passing standard. Your foundational cloud architectural knowledge is solid."
+                : 'Great effort! Review the domain performance breakdown below and revise weaker areas with Rafiki AI before taking another attempt.'}
             </p>
+
+            <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto pt-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-500 block text-[10px] font-semibold uppercase">Questions</span>
+                <strong className="text-slate-900 font-bold">
+                  {Object.values(mockExamResult.domain_breakdown).reduce((acc, c) => acc + c.correct, 0)} / {Object.values(mockExamResult.domain_breakdown).reduce((acc, c) => acc + c.total, 0)}
+                </strong>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="text-slate-500 block text-[10px] font-semibold uppercase">Time Taken</span>
+                <strong className="text-slate-900 font-bold">{formatTimer(mockExamResult.duration_seconds)}</strong>
+              </div>
+            </div>
           </div>
 
           {/* Domain Breakdown Bars */}
           <div className="space-y-3 text-left pt-2">
-            <h4 className="text-xs font-bold text-slate-700">Domain Performance:</h4>
+            <h4 className="text-xs font-bold text-slate-700">Domain Performance Breakdown:</h4>
             {DOMAINS.map(d => {
               const stat = mockExamResult.domain_breakdown[d.id] || { total: 0, correct: 0, pct: 0 };
               return (
@@ -720,21 +758,32 @@ export const QuizPage: React.FC<QuizPageProps> = ({
             })}
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          {/* Action Buttons */}
+          <div className="space-y-2 pt-2">
+            <div className="flex space-x-3">
+              <button
+                onClick={() => onNavigate('rafiki')}
+                className="flex-1 py-3 px-3 rounded-xl border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-xs font-bold text-blue-700 flex items-center justify-center space-x-1.5 transition-all active:scale-[0.97]"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Ask Rafiki About Weak Areas</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsQuizActive(false);
+                  setIsMockCompleted(false);
+                }}
+                className="flex-1 py-3 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-[0.97] hover:-translate-y-px"
+              >
+                <span>Take Another Quiz</span>
+              </button>
+            </div>
+
             <button
               onClick={() => onNavigate('home')}
-              className="flex-1 py-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-[0.97]"
+              className="w-full py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97]"
             >
-              Go to Dashboard
-            </button>
-            <button
-              onClick={() => {
-                setIsQuizActive(false);
-                setIsMockCompleted(false);
-              }}
-              className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-[0.97] hover:-translate-y-px"
-            >
-              Take Another Quiz
+              Return to Dashboard
             </button>
           </div>
         </motion.div>
