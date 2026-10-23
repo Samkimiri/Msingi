@@ -6,14 +6,255 @@
   :root {
     --color-bg: #f8fafc;
     --color-surface: #ffffff;
+
+    /* Glassmorphism Design Tokens derived strictly from existing palette */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.58);
+    --glass-bg-strong: rgba(255, 255, 255, 0.86);
+    --glass-border: rgba(226, 232, 240, 0.85);
+    --glass-border-focus: rgba(0, 120, 212, 0.40);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    --glass-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    
+    /* Device-responsive blur values */
+    --glass-blur-card: 12px;
+    --glass-blur-nav: 16px;
+    --glass-blur-modal: 20px;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --glass-blur-card: 8px;
+      --glass-blur-nav: 12px;
+      --glass-blur-modal: 16px;
+    }
   }
 
   body {
-    background-color: #f8fafc;
+    background-color: var(--color-bg);
     color: #1e293b;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* Glassmorphism Utility Classes */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    box-shadow: var(--glass-highlight), var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur-card)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-card)) saturate(140%);
+  }
+
+  .glass-subtle {
+    background: var(--glass-bg-subtle);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur-card)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-card)) saturate(140%);
+  }
+
+  .glass-strong {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    box-shadow: var(--glass-highlight), var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur-modal)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-modal)) saturate(140%);
+  }
+
+  .glass-header {
+    background: var(--glass-bg-strong);
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur-nav)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(140%);
+  }
+
+  .glass-nav {
+    background: var(--glass-bg-strong);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -4px 20px -2px rgba(15, 23, 42, 0.04);
+    backdrop-filter: blur(var(--glass-blur-nav)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(140%);
+  }
+
+  /* Primary CTA Shimmer Sweep */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.25),
+      transparent
+    );
+    transform: translateX(-150%);
+    animation: shimmerSweep 6s infinite;
+  }
+}
+
+/* Fallback for browsers lacking backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass,
+  .glass-subtle,
+  .glass-strong,
+  .glass-header,
+  .glass-nav {
+    background: #ffffff !important;
+  }
+}
+
+/* Accessibility: prefers-reduced-transparency & prefers-contrast */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass,
+  .glass-subtle,
+  .glass-strong,
+  .glass-header,
+  .glass-nav {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-shimmer::after {
+    animation: none !important;
+    display: none !important;
+  }
+  .animate-pattern-pan,
+  .animate-wave-1,
+  .animate-wave-2,
+  .animate-wave-3,
+  .animate-wave-slow-1,
+  .animate-wave-slow-2,
+  .animate-wave-slow-3,
+  .animate-bubble-rise,
+  .animate-bubble-sway {
+    animation: none !important;
+  }
+}
+
+/* Pure CSS Keyframe Animations */
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%);
+  }
+  20%, 100% {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes patternPan {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(60px, 60px);
+  }
+}
+
+@keyframes waveSideways1 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes waveSideways2 {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes waveSideways3 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  88% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-115vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bubbleSway {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+.animate-pattern-pan {
+  animation: patternPan 9s linear infinite;
+}
+
+.animate-wave-1 {
+  animation: waveSideways1 12s linear infinite;
+}
+
+.animate-wave-2 {
+  animation: waveSideways2 20s linear infinite;
+}
+
+.animate-wave-3 {
+  animation: waveSideways3 30s linear infinite;
+}
+
+.animate-wave-slow-1 {
+  animation: waveSideways1 19.2s linear infinite;
+}
+
+.animate-wave-slow-2 {
+  animation: waveSideways2 32s linear infinite;
+}
+
+.animate-wave-slow-3 {
+  animation: waveSideways3 48s linear infinite;
+}
+
+.animate-bubble-rise {
+  animation-name: bubbleRise;
+}
+
+.animate-bubble-sway {
+  animation-name: bubbleSway;
 }
 
 /* Custom scrollbar for mobile clean look */

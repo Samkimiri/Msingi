@@ -58,6 +58,11 @@ export default {
           400: '#6366f1',
           500: '#4f46e5',
           600: '#4338ca',
+        },
+        glass: {
+          bg: 'var(--glass-bg)',
+          'bg-strong': 'var(--glass-bg-strong)',
+          border: 'var(--glass-border)',
         }
       },
       fontFamily: {
@@ -68,6 +73,7 @@ export default {
         'glow-blue': '0 4px 14px 0 rgba(0, 120, 212, 0.25)',
         'glow-green': '0 4px 14px 0 rgba(16, 185, 129, 0.2)',
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)',
+        'glass': 'var(--glass-shadow)',
       }
     },
   },
