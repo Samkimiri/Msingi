@@ -233,7 +233,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
 
       {/* Session Completed View */}
       {sessionCompleted || filteredCards.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-4 max-w-md mx-auto shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-8 text-center space-y-4 max-w-md mx-auto shadow-sm">
           <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
             <CheckCircle2 className="w-8 h-8" />
           </div>
@@ -249,17 +249,17 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
             <button
               onClick={handleRestart}
-              className="w-full sm:w-auto px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold rounded-xl border border-slate-200 flex items-center justify-center space-x-1.5"
+              className="w-full sm:w-auto px-4 py-2 bg-slate-50/90 hover:bg-slate-100 text-slate-800 text-xs font-bold rounded-xl border border-slate-200 flex items-center justify-center space-x-1.5 active:scale-[0.97] transition-all"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Review Again</span>
             </button>
             <button
               onClick={() => onNavigate('quiz', { mode: 'domain' })}
-              className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center space-x-1.5"
+              className="btn-shimmer w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center space-x-1.5 active:scale-[0.97] hover:-translate-y-px transition-all"
             >
-              <span>Test Knowledge in Quiz</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <span className="relative z-10">Test Knowledge in Quiz</span>
+              <ChevronRight className="w-3.5 h-3.5 relative z-10" />
             </button>
           </div>
         </div>
@@ -277,7 +277,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
               </span>
               <button
                 onClick={() => setReportCardId(currentCard.id)}
-                className="hover:text-blue-700 text-slate-400 p-1 rounded"
+                className="hover:text-blue-700 text-slate-400 p-1 rounded active:scale-90"
                 title="Report issue with this card"
               >
                 <AlertCircle className="w-4 h-4" />
@@ -288,7 +288,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
           {/* 3D Flip Card Container */}
           <div
             onClick={() => setIsFlipped(prev => !prev)}
-            className="w-full min-h-[300px] bg-gradient-to-br from-white to-blue-50/40 border border-slate-200 rounded-3xl p-6 sm:p-8 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between transition-all hover:border-blue-400 relative select-none"
+            className="w-full min-h-[300px] glass border border-slate-200/90 rounded-3xl p-6 sm:p-8 cursor-pointer shadow-sm hover:shadow-md flex flex-col justify-between transition-all hover:border-blue-400 relative select-none"
           >
             {/* Top Indicator */}
             <div className="flex items-center justify-between">
@@ -319,7 +319,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
 
                   {/* African Analogy Section */}
                   {currentCard.african_analogy && (
-                    <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs mt-4">
+                    <div className="p-3.5 rounded-2xl bg-blue-50/90 border border-blue-200 text-xs mt-4">
                       <div className="flex items-center space-x-1.5 text-blue-700 font-bold mb-1">
                         <Globe className="w-3.5 h-3.5" />
                         <span>Rafiki's African Analogy</span>
@@ -350,7 +350,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
                     e.stopPropagation();
                     onOpenRafiki(currentCard.front);
                   }}
-                  className="text-blue-700 hover:text-blue-800 font-semibold flex items-center space-x-1"
+                  className="text-blue-700 hover:text-blue-800 font-semibold flex items-center space-x-1 active:scale-95"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Ask Rafiki to Elaborate</span>
@@ -368,7 +368,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
               <div className="grid grid-cols-4 gap-2">
                 <button
                   onClick={() => handleRate('again')}
-                  className="py-3 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-95 shadow-sm"
+                  className="py-3 px-2 rounded-xl bg-rose-50/90 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-[0.95] shadow-sm"
                 >
                   <span className="text-sm font-extrabold">Again</span>
                   <span className="text-[10px] text-rose-600 font-normal">&lt; 1 day</span>
@@ -376,7 +376,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
 
                 <button
                   onClick={() => handleRate('hard')}
-                  className="py-3 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-95 shadow-sm"
+                  className="py-3 px-2 rounded-xl bg-amber-50/90 hover:bg-amber-100 border border-amber-200 text-amber-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-[0.95] shadow-sm"
                 >
                   <span className="text-sm font-extrabold">Hard</span>
                   <span className="text-[10px] text-amber-600 font-normal">1-2 days</span>
@@ -384,7 +384,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
 
                 <button
                   onClick={() => handleRate('good')}
-                  className="py-3 px-2 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-95 shadow-sm"
+                  className="py-3 px-2 rounded-xl bg-blue-50/90 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-[0.95] shadow-sm"
                 >
                   <span className="text-sm font-extrabold">Good</span>
                   <span className="text-[10px] text-blue-600 font-normal">3-5 days</span>
@@ -392,7 +392,7 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
 
                 <button
                   onClick={() => handleRate('easy')}
-                  className="py-3 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-95 shadow-sm"
+                  className="py-3 px-2 rounded-xl bg-emerald-50/90 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition-all active:scale-[0.95] shadow-sm"
                 >
                   <span className="text-sm font-extrabold">Easy</span>
                   <span className="text-[10px] text-emerald-600 font-normal">6+ days</span>
@@ -402,10 +402,10 @@ export const FlashcardsPage: React.FC<FlashcardsPageProps> = ({
           ) : (
             <button
               onClick={() => setIsFlipped(true)}
-              className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2"
+              className="btn-shimmer w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 active:scale-[0.97] hover:-translate-y-px"
             >
-              <span>Show Answer & Recall Test</span>
-              <span className="text-blue-100 text-[10px]">(Space)</span>
+              <span className="relative z-10">Show Answer & Recall Test</span>
+              <span className="text-blue-100 text-[10px] relative z-10">(Space)</span>
             </button>
           )}
 

@@ -19,7 +19,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-8 pb-8 max-w-3xl mx-auto">
       {/* Title & Mission */}
-      <div className="bg-gradient-to-br from-blue-50/80 via-white to-sky-50/60 border border-blue-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
+      <div className="glass border border-blue-200/90 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
         <div className="flex items-center space-x-2.5">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-blue-500/20">
             M
@@ -41,7 +41,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* Mandatory Compliance Box */}
-      <div className="p-5 rounded-3xl bg-amber-50 border border-amber-200 space-y-2 shadow-sm">
+      <div className="p-5 rounded-3xl bg-amber-50/90 border border-amber-200/90 space-y-2 shadow-sm">
         <div className="flex items-center space-x-2 text-amber-700 font-bold text-xs uppercase tracking-wider">
           <Info className="w-4 h-4 text-amber-600" />
           <span>Mandatory Disclaimer & Trademark Notices</span>
@@ -63,7 +63,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Readiness Engine */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-2.5 shadow-sm">
+          <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm">
             <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
               <Target className="w-4 h-4" />
             </div>
@@ -74,7 +74,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* SM-2 Spaced Repetition */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-2.5 shadow-sm">
+          <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm">
             <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
               <Brain className="w-4 h-4" />
             </div>
@@ -85,7 +85,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* Deterministic Planner */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-2.5 shadow-sm">
+          <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm">
             <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
               <Layers className="w-4 h-4" />
             </div>
@@ -96,7 +96,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* Rafiki AI Tutor */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-2.5 shadow-sm">
+          <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm">
             <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>

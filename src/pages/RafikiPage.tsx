@@ -261,7 +261,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] max-w-3xl mx-auto space-y-4">
       {/* Top Banner: Language Selector & Controls */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-3.5 flex items-center justify-between shadow-sm">
+      <div className="glass border border-slate-200/90 rounded-3xl p-3.5 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
             <Sparkles className="w-4 h-4" />
@@ -279,7 +279,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
 
         <div className="flex items-center space-x-2">
           {/* Language selector */}
-          <div className="flex items-center space-x-1 bg-slate-50 border border-slate-200 px-2 py-1 rounded-xl text-xs">
+          <div className="flex items-center space-x-1 bg-slate-50/80 border border-slate-200 px-2 py-1 rounded-xl text-xs">
             <Languages className="w-3.5 h-3.5 text-slate-500" />
             <select
               value={language}
@@ -295,7 +295,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
 
           <button
             onClick={handleClearChat}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100/70 transition-all active:scale-90"
             title="Clear chat history"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -329,7 +329,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
                 className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 text-xs leading-relaxed ${
                   isUser
                     ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-500/10'
-                    : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm space-y-2'
+                    : 'glass border border-slate-200/90 text-slate-800 rounded-tl-none shadow-sm space-y-2'
                 }`}
               >
                 <div className="whitespace-pre-line font-normal">
@@ -356,7 +356,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
                       </button>
                       <button
                         onClick={() => setReportMsgId(msg.id)}
-                        className="hover:text-amber-600 text-slate-400 transition-colors p-0.5"
+                        className="hover:text-amber-600 text-slate-400 transition-colors p-0.5 active:scale-90"
                         title="Report issue with answer"
                       >
                         <AlertCircle className="w-3 h-3" />
@@ -374,7 +374,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
             <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center flex-shrink-0">
               <Bot className="w-3.5 h-3.5" />
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 flex items-center space-x-1.5 shadow-sm">
+            <div className="glass border border-slate-200/90 rounded-2xl rounded-tl-none p-3.5 flex items-center space-x-1.5 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.2s]" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.4s]" />
@@ -390,7 +390,7 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
           <button
             key={idx}
             onClick={() => handleSendMessage(chip)}
-            className="px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 text-[11px] whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 shadow-sm"
+            className="px-3.5 py-1.5 rounded-full glass hover:border-blue-400 hover:bg-blue-50/60 text-slate-700 hover:text-blue-700 text-[11px] whitespace-nowrap transition-all flex items-center space-x-1.5 flex-shrink-0 shadow-sm active:scale-[0.97]"
           >
             <Sparkles className="w-3 h-3 text-blue-600" />
             <span>{chip}</span>
@@ -411,12 +411,12 @@ export const RafikiPage: React.FC<RafikiPageProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={`Ask Rafiki in ${language}... (e.g. "What is an Azure region?")`}
-          className="w-full bg-white border border-slate-200 focus:border-blue-600 rounded-2xl px-4 py-3 pr-12 text-xs text-slate-800 placeholder-slate-400 focus:outline-none shadow-sm transition-colors"
+          className="w-full glass focus:bg-white border border-slate-200 focus:border-blue-600 rounded-2xl px-4 py-3 pr-12 text-xs text-slate-800 placeholder-slate-400 focus:outline-none shadow-sm transition-all"
         />
         <button
           type="submit"
           disabled={!input.trim()}
-          className="absolute right-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white transition-all shadow-md shadow-blue-500/20 disabled:shadow-none"
+          className="absolute right-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white transition-all shadow-md shadow-blue-500/20 disabled:shadow-none active:scale-[0.95]"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

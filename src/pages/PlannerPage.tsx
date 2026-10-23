@@ -146,7 +146,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={handleExportIcs}
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
+            className="px-3.5 py-2 bg-white/90 hover:bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm active:scale-[0.97]"
             title="Download .ics calendar file for Apple/Google/Outlook calendar"
           >
             <Download className="w-3.5 h-3.5 text-blue-600" />
@@ -154,16 +154,16 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
           </button>
           <button
             onClick={handleReplan}
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center space-x-1.5 transition-all"
+            className="btn-shimmer px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center space-x-1.5 transition-all active:scale-[0.97] hover:-translate-y-px"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Re-plan from Today</span>
+            <RotateCcw className="w-3.5 h-3.5 relative z-10" />
+            <span className="relative z-10">Re-plan from Today</span>
           </button>
         </div>
       </div>
 
       {replanSuccess && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center space-x-2 animate-fadeIn shadow-sm">
+        <div className="p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center space-x-2 animate-fadeIn shadow-sm">
           <Check className="w-4 h-4 text-emerald-600" />
           <span className="font-medium">Schedule re-calculated successfully starting from today!</span>
         </div>
@@ -171,7 +171,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
 
       {/* Target Exam Date & Overall Progress Card */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Target Exam Date
           </span>
@@ -185,7 +185,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Tasks Completed
           </span>
@@ -196,13 +196,16 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
             <div
-              className="h-full bg-emerald-600 rounded-full transition-all duration-500"
-              style={{ width: `${completionPct}%` }}
+              className="h-full bg-emerald-600 rounded-full"
+              style={{
+                width: `${completionPct}%`,
+                transition: 'width 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
             />
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between shadow-sm">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             Weekly Study Pace
           </span>
@@ -213,7 +216,7 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
           </div>
           <button
             onClick={onRetakeOnboarding}
-            className="text-[11px] text-blue-700 hover:text-blue-800 font-semibold text-left underline"
+            className="text-[11px] text-blue-700 hover:text-blue-800 font-semibold text-left underline active:scale-95"
           >
             Adjust weekly study hours
           </button>
@@ -274,10 +277,10 @@ export const PlannerPage: React.FC<PlannerPageProps> = ({
             return (
               <div
                 key={dateStr}
-                className={`bg-white border rounded-3xl p-4 sm:p-5 space-y-3 transition-colors shadow-sm ${
+                className={`glass border rounded-3xl p-4 sm:p-5 space-y-3 transition-colors shadow-sm ${
                   isToday
-                    ? 'border-blue-400 bg-gradient-to-br from-blue-50/40 via-white to-white ring-2 ring-blue-500/10'
-                    : 'border-slate-200'
+                    ? 'border-blue-400 bg-gradient-to-br from-blue-50/50 via-white/80 to-white/70 ring-2 ring-blue-500/10'
+                    : 'border-slate-200/90'
                 }`}
               >
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">

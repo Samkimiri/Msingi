@@ -33,7 +33,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-8 pb-8 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="bg-gradient-to-br from-emerald-50/70 via-white to-blue-50/60 border border-emerald-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+      <div className="glass border border-emerald-200/90 rounded-3xl p-6 shadow-sm relative overflow-hidden">
         <div className="flex items-center space-x-3 mb-2">
           <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-200">
             <ShieldCheck className="w-6 h-6" />
@@ -54,7 +54,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
 
       {/* 3 Pillars of Verification */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-3 shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm">
           <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
             1
           </div>
@@ -64,7 +64,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-3 shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm">
           <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
             2
           </div>
@@ -74,7 +74,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-3 shadow-sm">
+        <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-3 shadow-sm">
           <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
             3
           </div>
@@ -86,7 +86,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* Full Syllabus Coverage Matrix */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+      <div className="glass border border-slate-200/90 rounded-3xl p-6 space-y-6 shadow-sm">
         <div>
           <h2 className="text-base font-bold text-slate-900">
             Full Syllabus Coverage Matrix
@@ -172,7 +172,7 @@ export const AccuracyPage: React.FC<AccuracyPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* Community Scrutiny & Issue Reporting */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+      <div className="glass border border-slate-200/90 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div>
           <h3 className="text-sm font-bold text-slate-900">Found a discrepancy or outdated Azure detail?</h3>
           <p className="text-xs text-slate-600 mt-1 max-w-lg">
