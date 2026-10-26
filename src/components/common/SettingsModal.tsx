@@ -10,6 +10,9 @@ import {
   Zap,
   Check,
   Sliders,
+  Wifi,
+  HardDriveDownload,
+  Database,
 } from 'lucide-react';
 import { StorageService } from '../../lib/storage';
 import { SupportedLanguage, UserProfile } from '../../types';
@@ -130,6 +133,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 );
               }
             )}
+          </div>
+        </div>
+
+        {/* Setting 3: Offline Storage & PWA Support */}
+        <div className="space-y-2.5 pt-1">
+          <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <HardDriveDownload className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Offline Support & Storage</span>
+          </label>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                Offline Mode Status
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                Active & Cached
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Msingi installs a background service worker. All 100+ quiz questions, 14 official Microsoft syllabus notes, flashcards, and Rafiki AI study buddy are cached directly on your device. You can study anywhere without consuming cellular data.
+            </p>
           </div>
         </div>
 

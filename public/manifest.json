@@ -1,18 +1,21 @@
 {
   "short_name": "Msingi",
   "name": "Msingi - AZ-900 Prep",
-  "description": "Unofficial mobile-first study tool for Microsoft Azure Fundamentals (AZ-900).",
+  "description": "Unofficial mobile-first study tool for Microsoft Azure Fundamentals (AZ-900). Works 100% offline.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1120",
+  "theme_color": "#0078d4",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "/favicon.svg",
       "type": "image/svg+xml",
-      "sizes": "512x512"
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
     }
-  ],
-  "start_url": "/",
-  "background_color": "#0b1120",
-  "theme_color": "#0078d4",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }
-

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { WifiOff, CheckCircle2 } from 'lucide-react';
 import { Header } from './components/common/Header';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
@@ -16,6 +17,7 @@ import { AboutPage } from './pages/AboutPage';
 import { NotesPage } from './pages/NotesPage';
 import { SettingsModal } from './components/common/SettingsModal';
 import { StorageService } from './lib/storage';
+import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { Question, UserProfile } from './types';
 
 export const App: React.FC = () => {
@@ -31,6 +33,9 @@ export const App: React.FC = () => {
   // Theme settings (Light / Darker Mode)
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(() => StorageService.getTheme());
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Real-time network connectivity status
+  const { isOnline, wasOffline } = useOnlineStatus();
 
   useEffect(() => {
     if (currentTheme === 'dark') {
@@ -125,7 +130,34 @@ export const App: React.FC = () => {
           currentTheme={currentTheme}
           onToggleTheme={handleToggleTheme}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          isOnline={isOnline}
         />
+
+        {/* Offline & Reconnection Status Banners */}
+        <AnimatePresence>
+          {!isOnline && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-amber-500/90 dark:bg-amber-600/90 text-white text-xs font-semibold py-2 px-3 text-center flex items-center justify-center space-x-2 shadow-sm border-b border-amber-600/40 backdrop-blur-sm"
+            >
+              <WifiOff className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Offline Mode Active • All quizzes, notes, flashcards & Rafiki AI are cached and work 100% offline!</span>
+            </motion.div>
+          )}
+          {isOnline && wasOffline && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-emerald-600/95 dark:bg-emerald-700/95 text-white text-xs font-semibold py-2 px-3 text-center flex items-center justify-center space-x-2 shadow-sm border-b border-emerald-700/40 backdrop-blur-sm"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Back online! Your offline study sessions and attempts remain fully preserved.</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Main Content Area with 300ms Page Transitions */}
         <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-24 sm:pb-28">

@@ -9,6 +9,7 @@ import {
   Layers,
   Sparkles,
   ExternalLink,
+  WifiOff,
 } from 'lucide-react';
 
 interface AboutPageProps {
@@ -103,6 +104,17 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <h3 className="text-sm font-bold text-slate-900">Rafiki: The Grounded AI Buddy</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
               A contextual tutor speaking English, Kiswahili, Sheng, and Nigerian Pidgin. Explains complex cloud concepts with vivid local analogies, backed by an offline-ready knowledge base and official Microsoft Learn documentation links.
+            </p>
+          </div>
+
+          {/* Offline-First Architecture */}
+          <div className="glass border border-slate-200/90 rounded-3xl p-5 space-y-2.5 shadow-sm sm:col-span-2">
+            <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
+              <WifiOff className="w-4 h-4" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-900">100% Offline-First Architecture (PWA)</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Equipped with a high-performance Service Worker and client-side storage engine. All 100+ questions, 14 structured syllabus notes, flashcard decks, study schedules, and Rafiki AI's core explanation engine run directly on your browser or mobile phone without requiring constant cellular data or Wi-Fi.
             </p>
           </div>
         </div>

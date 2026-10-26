@@ -7,6 +7,7 @@ import {
   Moon,
   Sun,
   Sliders,
+  WifiOff,
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 
@@ -19,6 +20,7 @@ interface HeaderProps {
   currentTheme: 'light' | 'dark';
   onToggleTheme: () => void;
   onOpenSettings: () => void;
+  isOnline?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,6 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentTheme,
   onToggleTheme,
   onOpenSettings,
+  isOnline = true,
 }) => {
   return (
     <header className="sticky top-0 z-40 glass-header pt-safe">
@@ -95,6 +98,17 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Sliders className="w-4 h-4" />
           </button>
+
+          {/* Offline Mode Badge */}
+          {!isOnline && (
+            <div 
+              title="Working 100% offline - all quizzes, notes, and Rafiki AI are saved locally"
+              className="flex items-center space-x-1 bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 px-2 py-1 rounded-full text-xs font-semibold animate-pulse"
+            >
+              <WifiOff className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span className="hidden xs:inline text-[11px]">Offline</span>
+            </div>
+          )}
 
           {/* Streak indicator */}
           <div 
