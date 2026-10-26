@@ -67,9 +67,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
               <Target className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">Recency-Weighted Readiness</h3>
+            <h3 className="text-sm font-bold text-slate-900">Strict Multi-Quiz Readiness Engine</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Calculates your 0-100% exam readiness score using linear recency weighting over your last 50 attempts per domain. Recent mistakes and recent improvements are weighted heavier than historical attempts, normalized to official AZ-900 exam domain percentages.
+              Calculates your 0-100% exam readiness score by combining linear recency weighting with a strict multi-quiz volume calibration requirement (15+ questions per domain). Higher scores cannot be unlocked with a single quiz; they require sustained accuracy across several quizzes in all 3 official Microsoft domains.
             </p>
           </div>
 

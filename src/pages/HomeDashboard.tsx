@@ -206,7 +206,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
                 {animatedScore}%
               </span>
-              <span className="text-[10px] text-slate-500 font-medium">Recency-weighted</span>
+              <span className="text-[10px] text-slate-500 font-medium">Recency & Quiz Volume</span>
             </div>
           </div>
 
@@ -216,7 +216,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
           {/* Estimate Disclaimer Note */}
           <p className="text-[10px] text-slate-400 mt-3 border-t border-slate-100 pt-2 w-full">
-            * The readiness score is an estimate, not a guarantee of exam success.
+            * Strict calibration: requires completing several quizzes across all 3 domains to unlock passing readiness.
           </p>
         </motion.div>
 

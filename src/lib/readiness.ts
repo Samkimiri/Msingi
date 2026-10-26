@@ -83,8 +83,12 @@ export function calculateReadiness(
       accuracyPct = (weightedSuccessSum / totalWeight) * 100;
     }
 
+    // Volume calibration factor: strictly requires multiple quizzes (at least 15 attempts per domain) to fully calibrate
+    const calibrationFactor = Math.min(1.0, count / 15);
+
     const normWeight = (midpoints[domain.id] / sumMidpoints) * 100;
-    totalWeightedScore += (normWeight / 100) * accuracyPct;
+    // Each domain's contribution to overall readiness requires both high recency accuracy AND sufficient quiz volume
+    totalWeightedScore += (normWeight / 100) * accuracyPct * calibrationFactor;
 
     return {
       domain_id: domain.id,
@@ -97,30 +101,40 @@ export function calculateReadiness(
   });
 
   const overallScore = Math.min(100, Math.round(totalWeightedScore));
+  const totalAnswered = attempts.length;
 
   // Check mock exams qualification (at least 2 mocks scoring 80+)
   const qualifyingMocks = mockExams.filter(m => m.score_pct >= 80).length;
   const mockExamQualifies = qualifyingMocks >= 2;
 
-  // Determine readiness band
+  // Determine readiness band strictly based on calibrated score and practice volume
   let band: ReadinessScoreResult['band'] = 'Not ready';
-  let bandDescription = 'Keep building your foundation. Focus on learning core cloud principles and completing practice quizzes.';
+  let bandDescription = 'Keep building your foundation. Complete several quizzes across all 3 domains to build your readiness score.';
 
-  if (!allDomainsHaveEnoughData && overallScore >= 60) {
+  if (overallScore < 40) {
     band = 'Not ready';
-    bandDescription = 'Keep practising: answer at least 15 questions per domain to establish an accurate readiness score.';
-  } else if (overallScore >= 85 && mockExamQualifies) {
-    band = 'Exam ready';
-    bandDescription = 'Excellent! You have demonstrated high mastery across all domains and passed 2+ full mock exams with 80%+.';
-  } else if (overallScore >= 85 && !mockExamQualifies) {
-    band = 'Almost ready';
-    bandDescription = 'High domain mastery! Pass at least 2 full timed mock exams with 80%+ to unlock "Exam ready" status.';
-  } else if (overallScore >= 75) {
-    band = 'Almost ready';
-    bandDescription = 'Strong grasp of Azure concepts. Strengthen your weaker topics and start timed mock exams.';
-  } else if (overallScore >= 60) {
+    bandDescription = totalAnswered < 15
+      ? `Starting your journey (${totalAnswered} questions completed). Complete several quizzes across all 3 domains to build your readiness score.`
+      : 'Keep practicing across your weaker areas and review detailed question explanations to raise your score.';
+  } else if (overallScore < 65) {
     band = 'Getting there';
-    bandDescription = 'Solid foundation underway. Review the explanations for wrong answers to push into the target zone.';
+    bandDescription = !allDomainsHaveEnoughData
+      ? 'Good progress! Take more quizzes in calibrating domains to establish a dependable passing foundation.'
+      : 'Solid foundation underway. Review explanations for incorrect answers to push your score above 70%.';
+  } else if (overallScore < 85) {
+    band = 'Almost ready';
+    bandDescription = !mockExamQualifies
+      ? 'Strong domain mastery across multiple quizzes! Pass at least 2 full timed mock exams with 80%+ to unlock "Exam ready" status.'
+      : 'Strong grasp of Azure concepts across several quizzes. Strengthen remaining weak topics and finalize your prep.';
+  } else {
+    // 85+
+    if (mockExamQualifies) {
+      band = 'Exam ready';
+      bandDescription = 'Excellent! You have demonstrated high mastery across several quizzes and passed 2+ full mock exams with 80%+.';
+    } else {
+      band = 'Almost ready';
+      bandDescription = 'High domain mastery across quizzes! Pass at least 2 full timed mock exams with 80%+ to unlock "Exam ready" status.';
+    }
   }
 
   // 3. Topic Heatmap Breakdown
@@ -175,7 +189,6 @@ export function calculateReadiness(
   };
 
   const weakTopics = topicReadiness.filter(t => t.is_weak);
-  const totalAnswered = attempts.length;
 
   if (totalAnswered === 0) {
     nextBestAction = {
